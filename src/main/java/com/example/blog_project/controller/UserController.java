@@ -42,7 +42,7 @@ public class UserController {
     }
     @PostMapping("/signUp")
     public String signUp(@ModelAttribute User user,  @RequestParam("profileImage") MultipartFile profileImage, RedirectAttributes redirectAttributes) {
-        //@RequestParam은 폼 데이터를 추출할 때 HTTP POST 요청에서 폼 데이터에서 파라미터 값을 가져오는 데 사용된다.
+        //@RequestParam은 폼 데이터를 추출할 때 HTTP POST 요청에서 폼 데이터에서 파라미터 값을 가져오는 데 사용됨
         // MultipartFile 프로필 이미지를 post로 받아와서 저장할 수 있도록 함
         String profileImagePath = null;
         if (!profileImage.isEmpty()) {
