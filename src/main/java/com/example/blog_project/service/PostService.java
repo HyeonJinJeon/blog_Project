@@ -21,22 +21,9 @@ public class PostService {
         postRepository.save(post);
     }
 
+    //이미지 태그를 제외한 나머지 태그 모두 제거하는 로직
     public String sanitizePostContent(String content) {
         Document document = Jsoup.parse(content);
-
-        // 이미지 태그만 유지하고 나머지 태그 제거
-        Elements images = document.select("img");
-        for (Element img : images) {
-            String originalSrc = img.attr("src");
-            File imageFile = new File(originalSrc);  // 경로 그대로 사용
-
-            if (imageFile.exists()) {
-                String newSrc = "/local-image?filename=" + imageFile.getName();
-                img.attr("src", newSrc);
-            } else {
-                img.attr("src", "/Users/jeonhyeonjin/blog_project/dev-jeans.png");
-            }
-        }
 
         // HTML 태그 제거하면서 이미지 태그 유지
         Whitelist whitelist = Whitelist.none().addTags("img").addAttributes("img", "src");
