@@ -33,6 +33,7 @@ public class BlogController {
     private final UserService userService;
     private static final String UPLOAD_DIR = "/Users/jeonhyeonjin/blog_project/"; // 이미지 업로드 디렉토리
 
+    //블로그페이지 mapping
     @GetMapping("/blog")
     public String my(@RequestParam String username, Model model, HttpServletRequest request) {
         String myUsername = CookieUtil.getValue(request, "user");
