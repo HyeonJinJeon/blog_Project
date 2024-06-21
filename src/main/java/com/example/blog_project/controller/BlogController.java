@@ -35,10 +35,10 @@ public class BlogController {
 
     //블로그페이지 mapping
     @GetMapping("/blog")
-    public String my(@RequestParam String username, Model model, HttpServletRequest request) {
+    public String my(@RequestParam(value = "username") String blogUsername, Model model, HttpServletRequest request) {
         String myUsername = CookieUtil.getValue(request, "user");
         User user = userService.findUserByUsername(myUsername);
-        User blogUser = userService.findUserByUsername(username);
+        User blogUser = userService.findUserByUsername(blogUsername);
         Long blogUserId = blogUser.getId();
         Blog blog = blogService.getBlogByUserId(blogUserId);
 
