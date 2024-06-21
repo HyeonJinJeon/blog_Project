@@ -19,24 +19,28 @@ public class ImageController {
 
     private static final String UPLOAD_DIR = "/Users/jeonhyeonjin/blog_project/";
 
-    @GetMapping("/local-image")
-    public ResponseEntity<Resource> getImage(@RequestParam String filename) {
-        try {
-            Path file = Paths.get("/Users/jeonhyeonjin/blog_project").resolve(filename);
-            Resource resource = new UrlResource(file.toUri());
+    //"local-image" 엔드포인트로 GET 요청이 들어오면, URL의 쿼리 파라미터로 전달된 filename 값을 사용하여 로컬 파일 시스템에서 해당 파일을 찾아 응답하는 로직
+    //즉, 클라이언트가 이미지 요청을 보냈을 떄 처리해주는 로직이다
+    //ex)http://localhost:8080/local-image?filename=dev-jeans.png 이런식으로 요청을 받는다
+//    @GetMapping("/local-image")
+//    public ResponseEntity<Resource> getImage(@RequestParam String filename) {
+//        try {
+//            Path file = Paths.get("/Users/jeonhyeonjin/blog_project/").resolve(filename);
+//            Resource resource = new UrlResource(file.toUri());
+//
+//            if (resource.exists() || resource.isReadable()) {
+//                return ResponseEntity.ok()
+//                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+//                        .body(resource);
+//            } else {
+//                return ResponseEntity.notFound().build();
+//            }
+//        } catch (MalformedURLException e) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//    }
 
-            if (resource.exists() || resource.isReadable()) {
-                return ResponseEntity.ok()
-                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
-                        .body(resource);
-            } else {
-                return ResponseEntity.notFound().build();
-            }
-        } catch (MalformedURLException e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
+    //post의 content를 CKEditor를 사용하여 이미지를 넣을 때 로컬에 업로드하고 CKEditor에 다시 불러오는 api
     @PostMapping("/uploadImage")
     public ResponseEntity<?> uploadImage(@RequestParam("upload") MultipartFile upload) {
         try {
@@ -44,7 +48,6 @@ public class ImageController {
             if (!Files.exists(Paths.get(UPLOAD_DIR))) {
                 Files.createDirectories(Paths.get(UPLOAD_DIR));
             }
-
             String originalFileName = upload.getOriginalFilename();
             String fileName = originalFileName;
 
@@ -76,7 +79,7 @@ public class ImageController {
     }
 
 
-    // CKEditor에서 필요한 JSON 응답을 위한 클래스
+    // CKEditor에서 필요한 JSON 응답을 위한 클래스 uploadImage에 사용
     static class CKEditorUploadResponse {
         private int uploaded;
         private String url;
@@ -95,6 +98,7 @@ public class ImageController {
         }
     }
 
+    //이미지의 src가 /Users/jeonhyeonjin/blog_project/로 시작하는 이미지를 보여달라는 요청을 받는 api
     @GetMapping("/Users/jeonhyeonjin/blog_project/{filename:.+}")
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
         try {
