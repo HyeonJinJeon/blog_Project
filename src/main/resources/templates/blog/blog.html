@@ -12,6 +12,7 @@
 </header>
 <div class="profile-section">
     <div class="profile-image">
+        <!-- @GetMapping("blogUser.profileImageUrl")로 Get 요청을 보냄-->
         <img th:src="${blogUser.profileImageUrl}" alt="Profile Image" />
     </div>
     <div class="profile-info">
@@ -37,6 +38,7 @@
                     <div th:if="${postService.extractFirstImageUrl(post.content) != null}"
                          class="image-container"
                          style="max-width: 100%; overflow: hidden;">
+                        <!-- @GetMapping("postService.extractFirstImageUrl(post.content)")로 Get 요청을 보냄-->
                         <img th:src="${postService.extractFirstImageUrl(post.content)}"
                              alt="Post Image"
                              style="width: 100%; height: auto;">
