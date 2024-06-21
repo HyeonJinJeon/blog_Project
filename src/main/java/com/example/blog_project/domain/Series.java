@@ -1,7 +1,7 @@
 package com.example.blog_project.domain;
 
 import jakarta.persistence.*;
-ㅇ
+
 @Entity
 @Table(name = "Series")
 public class Series {
