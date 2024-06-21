@@ -32,7 +32,7 @@ public class PostService {
         return sanitizedContent;
     }
 
-    // post.content에 저장되어있는 이미지 중에서 첫 번째 이미지 URL 추출하는 메서드
+    // post.content에 저장되어있는 이미지 중에서 첫 번째 이미지 scr 추출하는 로직
     public String extractFirstImageUrl(String content) {
         Document doc = Jsoup.parse(content);
         Elements imgTags = doc.select("img");
