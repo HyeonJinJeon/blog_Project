@@ -1,5 +1,5 @@
 package com.example.blog_project.domain;
-
+ㅇ
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
