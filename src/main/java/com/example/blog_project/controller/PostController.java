@@ -22,6 +22,7 @@ public class PostController {
     private final UserService userService;
     private final BlogService blogService;
 
+    //post 작성
     @GetMapping("/posts/new")
     public String showPostForm(Model model) {
         model.addAttribute("post", new Post());
