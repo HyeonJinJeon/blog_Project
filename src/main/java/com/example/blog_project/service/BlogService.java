@@ -14,6 +14,7 @@ public class BlogService {
     private final BlogRepository blogRepository;
     private final UserRepository userRepository;
 
+    //블로그 생성
     @Transactional
     public Blog createBlog(String username, String title) {
         User user = userRepository.findByUsername(username);
@@ -28,14 +29,7 @@ public class BlogService {
         return blogRepository.save(blog);
     }
 
-    public Blog getBlogByUsername(String username) {
-        User user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new IllegalArgumentException("User not found");
-        }
-        return blogRepository.findByUser(user);
-    }
-
+    //블로그 불러오는 로직
     public Blog getBlogByUserId(Long userId) {
         return blogRepository.findByUserId(userId);
     }
