@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 public interface BlogRepository extends JpaRepository<Blog, Integer> {
     Blog findByUser(User user);
 
-
+ㄷ
     Blog findByUserId(Long userId);
 }
