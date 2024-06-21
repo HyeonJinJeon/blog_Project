@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>회원가입</title>
+</head>
+<body>
+<form action="/signUp" method="post" enctype="multipart/form-data" th:object="${user} ">
+    <label for="username">닉네임:</label>
+    <input type="text" id="username" name="username" th:field="*{username}" required><br>
+
+    <label for="name">이름:</label>
+    <input type="text" id="name" name="name" th:field="*{name}"><br>
+
+    <label for="email">이메일:</label>
+    <input type="email" id="email" name="email" th:field="*{email}" required><br>
+
+    <label for="password">비밀번호:</label>
+    <input type="password" id="password" name="password" th:field="*{password}" required><br>
+
+    <label for="profileImage">프로필 이미지:</label>
+    <input type="file" id="profileImage" name="profileImage"/><br/>
+
+    <button type="submit">가입하기</button>
+</form>
+</body>
+</html>

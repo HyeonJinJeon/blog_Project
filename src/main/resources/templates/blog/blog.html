@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${blog != null} ? ${blog.title} : 'My Blog'">My Blog</title>
+    <link rel="stylesheet" href="/css/blog.css">
+</head>
+<body>
+<header>
+    <h1 th:text="${blog != null} ? ${blog.title} : 'Blog Title'">Blog Title</h1>
+    <p th:text="${blog != null} ? ${blog.description} : 'Blog Description'">Blog Description</p>
+</header>
+<div class="profile-section">
+    <div class="profile-image">
+        <img th:src="${blogUser.profileImageUrl}" alt="Profile Image" />
+    </div>
+    <div class="profile-info">
+        <h2 th:text="${blogUser.name}">User Name</h2>
+        <p th:text="'@' + ${blogUser.username}">Username</p>
+    </div>
+</div>
+<div class="cover-image" th:if="${blog != null && blog.coverImageUrl != null}">
+    <img th:src="${blog.coverImageUrl}" alt="Cover Image">
+</div>
+<div th:if="${blog == null}">
+    <p>No blog found.</p>
+</div>
+<div th:if="${blog != null}">
+    <section>
+        <h2>Posts</h2>
+        <div class="posts-grid">
+            <div th:each="post : ${posts}" class="post-card">
+                <div class="post-content">
+                    <h3 th:text="${post.title}">Post Title</h3>
+                    <!-- postService에서 추출한 첫번째 이미지 URL 사용 -->
+                    <!-- 이미지가 있는 경우 -->
+                    <div th:if="${postService.extractFirstImageUrl(post.content) != null}"
+                         class="image-container"
+                         style="max-width: 100%; overflow: hidden;">
+                        <img th:src="${postService.extractFirstImageUrl(post.content)}"
+                             alt="Post Image"
+                             style="width: 100%; height: auto;">
+                    </div>
+                    <!-- 이미지가 없는 경우 -->
+                    <img th:unless="${postService.extractFirstImageUrl(post.content) != null}"
+                         src="/images/default-image.png"
+                         alt="Default Image"
+                         style="max-width: 100%; height: auto;">
+<!--                    <div th:utext="${#strings.replace(post.content, '\n', '<br>')}" class="post-content"></div>-->
+                    <p class="post-meta">Published on <span th:text="${post.createAt}">Date</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+</body>
+</html>

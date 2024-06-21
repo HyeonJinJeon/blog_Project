@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create New Post</title>
+    <link rel="stylesheet" href="/css/post.css">
+    <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
+</head>
+<body>
+<header>
+    <h1>Create a New Post</h1>
+</header>
+<section>
+    <form id="postForm" action="/posts" method="post">
+        <div class="form-group">
+            <label for="title">Title:</label>
+            <input type="text" id="title" name="title" required>
+        </div>
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea id="content" name="content" style="display: none;"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="seriesId">Series (optional):</label>
+            <input type="text" id="seriesId" name="seriesId">
+        </div>
+        <button type="submit">Create Post</button>
+    </form>
+</section>
+<script>
+    ClassicEditor
+        .create(document.querySelector('#content'), {
+            ckfinder: {
+                uploadUrl: '/uploadImage'
+            }
+        })
+        .then(editor => {
+            // 폼 제출 이벤트 핸들러 추가
+            document.querySelector('#postForm').addEventListener('submit', (event) => {
+                // CKEditor 데이터 textarea에 복사
+                const content = editor.getData();
+                document.querySelector('#content').value = content;
+
+                // 데이터가 비어 있는지 확인
+                if (!content.trim()) {
+                    // 오류 메시지 출력
+                    alert('Content is required.');
+                    event.preventDefault();
+                }
+            });
+        })
+        .catch(error => {
+            console.error(error);
+        });
+</script>
+</body>
+</html>
