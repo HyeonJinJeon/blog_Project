@@ -97,7 +97,7 @@ public class UserController {
             if(isAdmin){ //만약 관리자의 Role이 있다면
                 return "redirect:/admin";
             }else {
-                return "redirect:/main";
+                return "redirect:/blog?username=" + user.getUsername();
             }
         }else{
             return "redirect:/signIn";
