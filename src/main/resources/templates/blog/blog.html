@@ -12,12 +12,15 @@
 </header>
 <div class="profile-section">
     <div class="profile-image">
-        <!-- @GetMapping("blogUser.profileImageUrl")로 Get 요청을 보냄-->
+        <!-- @GetMapping("blogUser.profileImageUrl")로 Get 요청을 보냄 -->
         <img th:src="${blogUser.profileImageUrl}" alt="Profile Image" />
     </div>
     <div class="profile-info">
         <h2 th:text="${blogUser.name}">User Name</h2>
         <p th:text="'@' + ${blogUser.username}">Username</p>
+    </div>
+    <div th:if="${blogUser.username == user.username}" class="create-post-button">
+        <button onclick="location.href='/posts/new'">새 글 작성</button>
     </div>
 </div>
 <div class="cover-image" th:if="${blog != null && blog.coverImageUrl != null}">
@@ -36,19 +39,21 @@
                     <!-- postService에서 추출한 첫번째 이미지 URL 사용 -->
                     <!-- 이미지가 있는 경우 -->
                     <div th:if="${postService.extractFirstImageUrl(post.content) != null}"
-                         class="image-container"
-                         style="max-width: 100%; overflow: hidden;">
-                        <!-- @GetMapping("postService.extractFirstImageUrl(post.content)")로 Get 요청을 보냄-->
+                         class="image-container">
+                        <!-- @GetMapping("postService.extractFirstImageUrl(post.content)")로 Get 요청을 보냄 -->
                         <img th:src="${postService.extractFirstImageUrl(post.content)}"
                              alt="Post Image"
-                             style="width: 100%; height: auto;">
+                             class="post-image">
                     </div>
                     <!-- 이미지가 없는 경우 -->
-                    <img th:unless="${postService.extractFirstImageUrl(post.content) != null}"
-                         src="/images/default-image.png"
-                         alt="Default Image"
-                         style="max-width: 100%; height: auto;">
-<!--                    <div th:utext="${#strings.replace(post.content, '\n', '<br>')}" class="post-content"></div>-->
+                    <div th:unless="${postService.extractFirstImageUrl(post.content) != null}"
+                         class="image-container">
+                        <img th:src="@{/images/default-image.png}"
+                             alt="Default Image"
+                             class="post-image">
+                    </div>
+
+                    <!-- <div th:utext="${#strings.replace(post.content, '\n', '<br>')}" class="post-content"></div> -->
                     <p class="post-meta">Published on <span th:text="${post.createAt}">Date</span></p>
                 </div>
             </div>
