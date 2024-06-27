@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 @RequiredArgsConstructor
@@ -28,7 +29,6 @@ public class PostController {
         model.addAttribute("post", new Post());
         return "blog/postForm";
     }
-
     @PostMapping("/posts")
     public String createPost(@ModelAttribute Post post, HttpServletRequest request) {
         String myUsername = CookieUtil.getValue(request, "user");
@@ -39,5 +39,15 @@ public class PostController {
         postService.savePost(post);
 
         return "redirect:/blog?username=" + myUsername;
+    }
+
+    //게시글 상세보기를 위한 컨트롤러 작성
+    @GetMapping("post")
+    public String showPost(@RequestParam String username, @RequestParam Long blogId, @RequestParam Long postId,  Model model) {
+        Post post = postService.getPostByBlogIdAndPostId(blogId, postId);
+        User user = userService.findUserByUsername(username);
+        model.addAttribute("post", post);
+        model.addAttribute("user", user);
+        return "blog/post";
     }
 }
