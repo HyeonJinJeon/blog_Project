@@ -111,4 +111,14 @@ public class UserController {
         model.addAttribute("user", user);
         return "/main";
     }
+
+    @GetMapping("/logout")
+    public String logOut(HttpServletResponse response) {
+        Cookie cookie = new Cookie("user", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+
+        return "redirect:/signIn";
+    }
 }
