@@ -45,4 +45,12 @@ public class PostService {
         // 이미지가 없는 경우 null을 반환한다
         return null;
     }
+
+//    public Post getPostById(String postId) {
+//        return postRepository.findById(Integer.valueOf(postId)).orElseGet(null);
+//    }
+
+    public Post getPostByBlogIdAndPostId(Long blogId, Long postId) {
+        return postRepository.findByBlogIdAndId(blogId, postId);
+    }
 }
