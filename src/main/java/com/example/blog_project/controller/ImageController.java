@@ -1,5 +1,6 @@
 package com.example.blog_project.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -19,9 +20,6 @@ public class ImageController {
 
     private static final String UPLOAD_DIR = "/Users/jeonhyeonjin/blog_project/";
 
-    //"local-image" 엔드포인트로 GET 요청이 들어오면, URL의 쿼리 파라미터로 전달된 filename 값을 사용하여 로컬 파일 시스템에서 해당 파일을 찾아 응답하는 로직
-    //즉, 클라이언트가 이미지 요청을 보냈을 떄 처리해주는 로직이다
-    //ex)http://localhost:8080/local-image?filename=dev-jeans.png 이런식으로 요청을 받는다
 //    @GetMapping("/local-image")
 //    public ResponseEntity<Resource> getImage(@RequestParam String filename) {
 //        try {
@@ -79,7 +77,8 @@ public class ImageController {
     }
 
 
-    // CKEditor에서 필요한 JSON 응답을 위한 클래스 uploadImage에 사용
+    // CKEditor에서 필요한 JSON 응답을 위한 클래스(uploadImage에 사용)
+    @RequiredArgsConstructor
     static class CKEditorUploadResponse {
         private int uploaded;
         private String url;
