@@ -67,4 +67,20 @@ public class BlogController {
 
         return "blog/blog";
     }
+
+    //헤더파일 mapping (위치 옮겨야될거같음)
+    @GetMapping("/")
+    public String header(@RequestParam(value = "username") String blogUsername, Model model, HttpServletRequest request) {
+        String myUsername = CookieUtil.getValue(request, "user");
+        User user = userService.findUserByUsername(myUsername);
+        User blogUser = userService.findUserByUsername(blogUsername);
+        Long blogUserId = blogUser.getId();
+        Blog blog = blogService.getBlogByUserId(blogUserId);
+
+        model.addAttribute("user", user);
+        model.addAttribute("blog", blog);
+
+
+        return "fragments/header";
+    }
 }
