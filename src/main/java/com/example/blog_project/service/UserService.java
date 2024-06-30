@@ -3,12 +3,14 @@ package com.example.blog_project.service;
 import com.example.blog_project.domain.User;
 import com.example.blog_project.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public User findUserByUsername(String username) {
         return userRepository.findByUsername(username);
@@ -25,6 +27,8 @@ public class UserService {
         if (userRepository.findByUsername(user.getUsername()) != null) {
             throw new RuntimeException("이미 등록된 userName입니다.");
         }
+        //비밀번호 암호화해서 넣어주기
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         // 데이터베이스에 유저 정보 저장
         return userRepository.save(user);
     }

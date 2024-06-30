@@ -38,7 +38,7 @@ public class User {
     @Column(name = "profile_image_url", length = 255)
     private String profileImageUrl;  // 프로필 사진 URL 필드 추가
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),

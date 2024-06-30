@@ -74,35 +74,35 @@ public class UserController {
         model.addAttribute("user", new User());
         return "user/signIn";
     }
-    @PostMapping("/signIn")
-    public String signIn(@ModelAttribute User user, HttpServletResponse response, HttpServletRequest request) {
-        boolean isUser = userService.authenticateByEmail(user.getUsername(), user.getPassword());
-        if(isUser){
-            //관리자 Role을 가져온다
-            Role adminRole = roleService.getRole(2L);
-            //관리자 Role이 포함되어 있는지 안되어 있는지 확인한다.
-            boolean isAdmin = userService.findUserByUsername(user.getUsername()).getRoles().contains(adminRole);
-
-            //유저 정보를 쿠키에 넣는다 (원래는 세션이 바람직함)
-            CookieUtil.create(response, "user", user.getUsername(), 7 * 24 * 60 * 60);
-            Cookie[] cookies = request.getCookies();
-            if (cookies != null) {
-                for (Cookie cookie : cookies) {
-                    if (cookie.getName().equals("user")) {
-                        System.out.println(cookie.getValue());
-                    }
-                }
-            }
-
-            if(isAdmin){ //만약 관리자의 Role이 있다면
-                return "redirect:/admin";
-            }else {
-                return "redirect:/blog?username=" + user.getUsername();
-            }
-        }else{
-            return "redirect:/signIn";
-        }
-    }
+//    @PostMapping("/signIn")
+//    public String signIn(@ModelAttribute User user, HttpServletResponse response, HttpServletRequest request) {
+//        boolean isUser = userService.authenticateByEmail(user.getUsername(), user.getPassword());
+//        if(isUser){
+//            //관리자 Role을 가져온다
+//            Role adminRole = roleService.getRole(2L);
+//            //관리자 Role이 포함되어 있는지 안되어 있는지 확인한다.
+//            boolean isAdmin = userService.findUserByUsername(user.getUsername()).getRoles().contains(adminRole);
+//
+//            //유저 정보를 쿠키에 넣는다 (원래는 세션이 바람직함)
+//            CookieUtil.create(response, "user", user.getUsername(), 7 * 24 * 60 * 60);
+//            Cookie[] cookies = request.getCookies();
+//            if (cookies != null) {
+//                for (Cookie cookie : cookies) {
+//                    if (cookie.getName().equals("user")) {
+//                        System.out.println(cookie.getValue());
+//                    }
+//                }
+//            }
+//
+//            if(isAdmin){ //만약 관리자의 Role이 있다면
+//                return "redirect:/admin";
+//            }else {
+//                return "redirect:/blog?username=" + user.getUsername();
+//            }
+//        }else{
+//            return "redirect:/signIn";
+//        }
+//    }
 
     @GetMapping("/main")
     public String main(Model model, HttpServletRequest request) {

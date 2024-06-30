@@ -25,16 +25,25 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.33'
     implementation 'org.jsoup:jsoup:1.14.3'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'  // Thymeleaf를 사용하는 경우
+    implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
     runtimeOnly 'com.mysql:mysql-connector-j'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+    implementation group: 'org.springframework.data', name: 'spring-data-jpa', version: '3.3.1'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+
+    //타임리프에서 스프링시큐리티를 쓸수있게.
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity6:3.1.2.RELEASE'
+
+
 }
 
 tasks.named('test') {
