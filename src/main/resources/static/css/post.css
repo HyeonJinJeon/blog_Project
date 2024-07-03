@@ -1,0 +1,54 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1b1b1b;
+    color: #eaeaea;
+    margin: 0;
+    padding: 0;
+}
+
+/* 헤더 스타일 */
+header {
+    background-color: #282828;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #444;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+header p {
+    margin: 10px 0 0;
+    font-size: 1.2em;
+    color: #a5a5a5;
+}
+
+/* 컨텐츠 스타일 */
+.content {
+    max-width: 800px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+.cover-image img {
+    width: 100%;
+    height: auto;
+    margin-bottom: 20px;
+}
+
+.post-content {
+    font-size: 1.1em;
+    line-height: 1.6;
+}
+
+.post-content p {
+    margin: 20px 0;
+}
+
+.post-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+}

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${post.title}">Post Title</title>
+    <link rel="stylesheet" href="/css/post.css">
+</head>
+<body>
+<header>
+    <h1 th:text="${post.title}">Post Title</h1>
+    <p class="post-meta">Published on <span th:text="${post.createAt}">Date</span> by <span th:text="${user.username}">Author</span></p>
+</header>
+<div class="content">
+    <div class="post-content" th:utext="${post.content}">
+        <!-- 포스트 내용이 여기에 표시됩니다. -->
+    </div>
+</div>
+</body>
+</html>
