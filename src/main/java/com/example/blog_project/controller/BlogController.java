@@ -108,6 +108,7 @@ public class BlogController {
         return "blog/blog";
     }
 
+    //주석입다
     //헤더파일 mapping (위치 옮겨야될거같음)
     @GetMapping("/")
     public String header(@RequestParam(value = "username") String blogUsername, Model model, HttpServletRequest request) {
