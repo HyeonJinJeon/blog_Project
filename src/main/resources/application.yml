@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: Blog_Project
+  datasource:
+    url: jdbc:mysql://localhost:3307/blog
+    username: jeon
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    jpa:
+      hibernate:
+        ddl-auto: update
+        show-sql: true
+    security:
+      user:
+        name: user
+        password: 1234
+server:
+  port: 8082
+  thymeleaf:
+    cache: false
+    check-template-location: true
+    prefix: classpath:/templates/
+    suffix: .html
+    enabled: true
+
+jwt:
+  secretKey: 12345678901234567890123456789012
+  refreshKey: 12345678901234567890123456789012

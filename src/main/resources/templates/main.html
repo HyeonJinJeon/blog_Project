@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>메인 페이지</title>
+    <script src="/js/main.js"></script>
+</head>
+<body>
+<!--<button onclick="redirectToMyBlog()">내 블로그</button>-->
+<a th:href="@{/blog(username=${user.getUsername()})}">내 블로그로 이동</a>
+</body>
+</html>
