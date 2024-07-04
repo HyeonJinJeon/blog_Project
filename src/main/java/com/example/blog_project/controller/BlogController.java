@@ -100,6 +100,7 @@ public class BlogController {
             model.addAttribute("posts", posts);
         }
 
+
         model.addAttribute("user", user);
         model.addAttribute("blogUser", blogUser);
         model.addAttribute("blog", blog);
