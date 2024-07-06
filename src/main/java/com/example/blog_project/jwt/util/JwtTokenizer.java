@@ -3,6 +3,7 @@ package com.example.blog_project.jwt.util;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -17,6 +18,7 @@ import java.util.Set;
 //필요한 정보도 꺼내오고.
 @Component
 @Slf4j
+@Getter
 public class JwtTokenizer {
     private final byte[] accessSecret;
     private final byte[] refreshSecret;
