@@ -54,7 +54,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // Access token 얻어냄
         String token = getToken(request);
 
-        if (StringUtils.hasText(token)) {
+        if (!StringUtils.hasText(token)) {
+            // 쿠키에서 토큰이 없는 경우 처리
+            String refreshToken = getRefreshToken(request);
+            if (StringUtils.hasText(refreshToken)) {
+                try {
+                    // Refresh Token이 유효한지 확인
+                    if (!jwtTokenizer.isRefreshTokenExpired(refreshToken)) {
+                        // Refresh Token이 유효한 경우 새로운 Access Token 발급
+                        String newAccessToken = jwtTokenizer.refreshAccessToken(refreshToken);
+                        // 새로운 Access Token을 쿠키에 설정
+                        Cookie accessTokenCookie = new Cookie("accessToken", newAccessToken);
+                        accessTokenCookie.setHttpOnly(true); // XSS 보호를 위해 HttpOnly 설정
+                        accessTokenCookie.setPath("/");
+                        accessTokenCookie.setMaxAge(Math.toIntExact( JwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT / 1000));
+                        response.addCookie(accessTokenCookie);
+                        getAuthentication(newAccessToken);
+                    } else {
+                        // Refresh Token도 만료된 경우
+                        request.setAttribute("exception", JwtExceptionCode.EXPIRED_TOKEN.getCode());
+                        log.error("Refresh token expired or not found");
+                        throw new BadCredentialsException("Expired refresh token");
+                    }
+                } catch (ExpiredJwtException e) {
+                    // Refresh Token이 만료된 경우
+                    request.setAttribute("exception", JwtExceptionCode.EXPIRED_TOKEN.getCode());
+                    log.error("Expired refresh token", e);
+                    throw new BadCredentialsException("Expired refresh token", e);
+                }
+            } else {
+                // Refresh Token도 없는 경우
+                request.setAttribute("exception", JwtExceptionCode.NOT_FOUND_TOKEN.getCode());
+                log.error("Token not found in request");
+                throw new BadCredentialsException("Token not found in request");
+            }
+        } else {
             try {
                 // AccessToken 검증
                 if (jwtBlacklistService.isTokenBlacklisted(token)) {
@@ -67,8 +101,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // 인증 설정 시도
                 getAuthentication(token);
             } catch (ExpiredJwtException e) {
-                System.out.println("accessToken 만료");
                 // Access Token이 만료된 경우 Refresh Token 확인
+                System.out.println("accessToken 만료");
                 String refreshToken = getRefreshToken(request);
                 if (StringUtils.hasText(refreshToken) && !jwtTokenizer.isRefreshTokenExpired(refreshToken)) {
                     System.out.println("accessToken 재발급 받으러 들어옴");
@@ -104,30 +138,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             } catch (Exception e) {
                 log.error("JWT Filter - Internal Error: {}", token, e);
                 throw new BadCredentialsException("JWT filter internal exception", e);
-            }
-        }else {
-            System.out.println("accessToken 만료");
-            // Access Token이 만료된 경우 Refresh Token 확인
-            String refreshToken = getRefreshToken(request);
-            if (StringUtils.hasText(refreshToken) && !jwtTokenizer.isRefreshTokenExpired(refreshToken)) {
-                System.out.println("accessToken 재발급 받으러 들어옴");
-
-                // Refresh Token이 유효한 경우 새로운 Access Token 발급
-                String newAccessToken = jwtTokenizer.refreshAccessToken(refreshToken);
-                // 새로운 Access Token을 쿠키에 설정
-                Cookie accessTokenCookie = new Cookie("accessToken", newAccessToken);
-                accessTokenCookie.setHttpOnly(true); // XSS 보호를 위해 HttpOnly 설정
-                accessTokenCookie.setPath("/");
-                accessTokenCookie.setMaxAge(Math.toIntExact(JwtTokenizer.ACCESS_TOKEN_EXPIRE_COUNT/1000)); //30분 쿠키의 유지시간 단위는 초 ,  JWT의 시간단위는 밀리세컨드
-                response.addCookie(accessTokenCookie);
-                getAuthentication(newAccessToken);
-            } else {
-                System.out.println("accessToken 재발급 실패");
-
-                // Refresh Token도 만료된 경우
-                request.setAttribute("exception", JwtExceptionCode.EXPIRED_TOKEN.getCode());
-                log.error("Expired Token : {}", token);
-                throw new BadCredentialsException("Expired token exception");
             }
         }
 
