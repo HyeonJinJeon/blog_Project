@@ -190,10 +190,16 @@ public class UserApiController {
         SecurityContextHolder.clearContext();
 
         // accessToken 쿠키 삭제
-        Cookie cookie = new Cookie("accessToken", null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-        response.addCookie(cookie);
+        Cookie accessCookie = new Cookie("accessToken", null);
+        accessCookie.setPath("/");
+        accessCookie.setMaxAge(0);
+        response.addCookie(accessCookie);
+
+        // refreshToken 쿠키 삭제
+        Cookie refresCcookie = new Cookie("refreshToken", null);
+        refresCcookie.setPath("/");
+        refresCcookie.setMaxAge(0);
+        response.addCookie(refresCcookie);
 
         // /signIn 페이지로 리디렉션
         try {
