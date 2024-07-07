@@ -22,7 +22,7 @@
                 <a th:href="@{/posting}">임시 글</a>
                 <a th:href="@{/read}">읽기 목록</a>
                 <a th:href="@{/setting}">설정</a>
-                <p onclick="logOut()">로그아웃</p>
+                <a th:href="@{/api/logout}">로그아웃</a>
             </div>
         </div>
         <div class="login-section" th:if="${user == null}">

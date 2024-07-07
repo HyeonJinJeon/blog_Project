@@ -7,7 +7,7 @@ import com.example.blog_project.domain.User;
 import com.example.blog_project.jwt.util.JwtTokenizer;
 import com.example.blog_project.security.dto.UserLoginDto;
 import com.example.blog_project.security.dto.UserLoginResponseDto;
-import com.example.blog_project.service.JwtBlackListService;
+import com.example.blog_project.service.JwtBlacklistService;
 import com.example.blog_project.service.RefreshTokenService;
 import com.example.blog_project.service.UserService;
 import io.jsonwebtoken.Claims;
@@ -17,18 +17,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 //@Controller
@@ -40,7 +38,7 @@ public class UserApiController {
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenizer jwtTokenizer;
     private final RefreshTokenService refreshTokenService;
-    private final JwtBlackListService jwtBlackListService;
+    private final JwtBlacklistService jwtBlackListService;
 
     @PostMapping("/login")
     public ResponseEntity login(@RequestBody @Valid UserLoginDto userLoginDto,
@@ -101,7 +99,7 @@ public class UserApiController {
 
         return new ResponseEntity(loginResponseDto, HttpStatus.OK);
     }
-    @GetMapping("/api/authtest")
+    @GetMapping("/authtest")
     public String authTest(){
         return "authTest";
     }
@@ -158,10 +156,23 @@ public class UserApiController {
         return new ResponseEntity(responseDto, HttpStatus.OK);
     }
 
-    @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestHeader("Authorization") String token) {
-        // Authorization 헤더에서 토큰 추출
-        String jwt = token.substring(7); // "Bearer " 부분을 제거
+    @GetMapping("/logout")
+    public void logout(@CookieValue(name = "accessToken", required = false) String accessToken, HttpServletResponse response) {
+        System.out.println("로그아웃 들어왔나");
+        if (accessToken == null) {
+            // accessToken이 존재하지 않으면 로그인되지 않은 상태로 간주하고 처리할 수 있습니다.
+            try {
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.getWriter().write("Access token not found in cookies.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
+        //JWT 토큰 추출
+        String jwt = accessToken;
+        System.out.println("jwt: " + jwt);
 
         // 토큰의 만료 시간 추출
         Date expirationTime = Jwts.parser()
@@ -169,6 +180,7 @@ public class UserApiController {
                 .parseClaimsJws(jwt)
                 .getBody()
                 .getExpiration();
+        System.out.println("만료시간: " + expirationTime);
 
         // 블랙리스트에 토큰 저장
         JwtBlacklist blacklist = new JwtBlacklist(jwt, expirationTime);
@@ -176,6 +188,18 @@ public class UserApiController {
 
         // SecurityContext를 클리어하여 현재 세션을 무효화
         SecurityContextHolder.clearContext();
-        return ResponseEntity.ok().build();
+
+        // accessToken 쿠키 삭제
+        Cookie cookie = new Cookie("accessToken", null);
+        cookie.setPath("/");
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+
+        // /signIn 페이지로 리디렉션
+        try {
+            response.sendRedirect("/signIn");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

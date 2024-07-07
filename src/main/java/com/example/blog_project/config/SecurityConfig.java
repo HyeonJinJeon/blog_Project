@@ -4,6 +4,7 @@ import com.example.blog_project.jwt.exception.CustomAuthenticationEntryPoint;
 import com.example.blog_project.jwt.filter.JwtAuthenticationFilter;
 import com.example.blog_project.jwt.util.JwtTokenizer;
 import com.example.blog_project.security.CustomUserDetailsService;
+import com.example.blog_project.service.JwtBlacklistService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,6 +29,7 @@ public class SecurityConfig {
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtTokenizer jwtTokenizer;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+    private final JwtBlacklistService jwtBlacklistService;
 
     /**
      * SecurityFilterChain 빈을 정의합니다.
@@ -37,11 +39,11 @@ public class SecurityConfig {
         http
                 // 인가 규칙을 설정합니다.
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/signUp", "/signIn", "/", "/css/**", "/js/**", "/images/**", "/api/login").permitAll()
+                        .requestMatchers("/signUp", "/signIn", "/", "/css/**", "/js/**", "/images/**", "/api/login", "/api/logout").permitAll()
                         .anyRequest().authenticated()
                 )
                 // UsernamePasswordAuthenticationFilter 앞에 JWT 인증 필터를 추가합니다.
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenizer), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenizer, jwtBlacklistService), UsernamePasswordAuthenticationFilter.class)
                 // 폼 로그인을 비활성화합니다. (JWT를 사용하여 인증을 수행합니다)
                 .formLogin(form -> form.disable())
                 // 세션 관리를 상태 없음으로 설정합니다. (세션을 사용하지 않음)
