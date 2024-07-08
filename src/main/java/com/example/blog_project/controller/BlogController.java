@@ -5,6 +5,7 @@ import com.example.blog_project.domain.Blog;
 import com.example.blog_project.domain.User;
 import com.example.blog_project.domain.Post;
 import com.example.blog_project.service.BlogService;
+import com.example.blog_project.service.FollowerService;
 import com.example.blog_project.service.PostService;
 import com.example.blog_project.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -33,6 +34,7 @@ public class BlogController {
     private final BlogService blogService;
     private final PostService postService;
     private final UserService userService;
+    private final FollowerService followerService;
     private static final String UPLOAD_DIR = "/Users/jeonhyeonjin/blog_project/"; // 이미지 업로드 디렉토리
 
     //블로그페이지 mapping
@@ -100,11 +102,17 @@ public class BlogController {
             model.addAttribute("posts", posts);
         }
 
-
         model.addAttribute("user", user);
         model.addAttribute("blogUser", blogUser);
         model.addAttribute("blog", blog);
         model.addAttribute("postService", postService);
+
+        long followerCount = followerService.getFollowerCount(blogUser.getId());
+        long followingCount = followerService.getFollowingCount(blogUser.getId());
+        boolean isFollowing = followerService.isFollowing(user.getId(), blogUser.getId());
+        model.addAttribute("followerCount", followerCount);
+        model.addAttribute("followingCount", followingCount);
+        model.addAttribute("isFollowing", isFollowing);
 
         return "blog/blog";
     }

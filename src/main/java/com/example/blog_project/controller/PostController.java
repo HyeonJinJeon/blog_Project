@@ -9,6 +9,8 @@ import com.example.blog_project.service.PostService;
 import com.example.blog_project.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,8 +32,9 @@ public class PostController {
         return "blog/postForm";
     }
     @PostMapping("/posts")
-    public String createPost(@ModelAttribute Post post, HttpServletRequest request) {
-        String myUsername = CookieUtil.getValue(request, "user");
+    public String createPost(@ModelAttribute Post post, HttpServletRequest request, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String myUsername = userDetails.getUsername();
         User user = userService.findUserByUsername(myUsername);
         Blog blog = blogService.getBlogByUserId(user.getId());
         post.setBlog(blog);

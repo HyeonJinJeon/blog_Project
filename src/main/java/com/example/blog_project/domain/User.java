@@ -36,7 +36,7 @@ public class User {
     private LocalDateTime registrationDate = LocalDateTime.now();
 
     @Column(name = "profile_image_url", length = 255)
-    private String profileImageUrl;  // 프로필 사진 URL 필드 추가
+    private String profileImageUrl;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
@@ -45,4 +45,17 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+
+    // 팔로워 관계 설정
+    @ManyToMany(mappedBy = "following", fetch = FetchType.LAZY)
+    private Set<User> followers = new HashSet<>();
+
+    // 팔로잉 관계 설정
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "user_follows",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "following_user_id")
+    )
+    private Set<User> following = new HashSet<>();
 }

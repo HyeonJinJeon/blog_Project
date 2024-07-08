@@ -1,74 +1,65 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org/"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org/" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
 <head>
     <meta charset="UTF-8">
     <title th:text="${blog != null} ? ${blog.title} : 'My Blog'">My Blog</title>
     <link rel="stylesheet" href="/css/blog.css">
     <script src="/js/header.js"></script>
-
     <link rel="stylesheet" href="/css/header.css">
 </head>
 <body>
 <div class="bodyContent">
-<th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
+    <th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
 
-<!--<header>-->
-<!--    <h1 th:text="${blog != null} ? ${blog.title} : 'Blog Title'">Blog Title</h1>-->
-<!--    <p th:text="${blog != null} ? ${blog.description} : 'Blog Description'">Blog Description</p>-->
-<!--</header>-->
-<div class="profile-section">
-    <div class="profile-image">
-        <!-- @GetMapping("blogUser.profileImageUrl")로 Get 요청을 보냄 -->
-        <img th:src="${blogUser.profileImageUrl}" alt="Profile Image" />
-    </div>
-    <div class="profile-info">
-        <h2 th:text="${blogUser.name}">User Name</h2>
-        <p th:text="'@' + ${blogUser.username}">Username</p>
-    </div>
-    <div th:if="${blogUser.username == user.username}" class="create-post-button">
-        <button onclick="location.href='/posts/new'">새 글 작성</button>
-    </div>
-</div>
-<div class="cover-image" th:if="${blog != null && blog.coverImageUrl != null}">
-    <img th:src="${blog.coverImageUrl}" alt="Cover Image">
-</div>
-<div th:if="${blog == null}">
-    <p>No blog found.</p>
-</div>
-<div th:if="${blog != null}">
-    <section>
-        <h2>Posts</h2>
-        <div class="posts-grid">
-            <div th:each="post : ${posts}" class="post-card">
-                <a th:href="@{'/post?username=' + ${user.username} + '&blogId=' + ${blog.id} + '&postId=' + ${post.id}}" class="post-link">
-                    <div class="post-content">
-                        <h3 th:text="${post.title}">Post Title</h3>
-                        <!-- postService에서 추출한 첫번째 이미지 URL 사용 -->
-                        <!-- 이미지가 있는 경우 -->
-                        <div th:if="${postService.extractFirstImageUrl(post.content) != null}"
-                             class="image-container">
-                            <!-- @GetMapping("postService.extractFirstImageUrl(post.content)")로 Get 요청을 보냄 -->
-                            <img th:src="${postService.extractFirstImageUrl(post.content)}"
-                                 alt="Post Image"
-                                 class="post-image">
-                        </div>
-                        <!-- 이미지가 없는 경우 -->
-                        <div th:unless="${postService.extractFirstImageUrl(post.content) != null}"
-                             class="image-container">
-                            <img th:src="@{/images/default-image.png}"
-                                 alt="Default Image"
-                                 class="post-image">
-                        </div>
-                        <!-- <div th:utext="${#strings.replace(post.content, '\n', '<br>')}" class="post-content"></div> -->
-                        <p class="post-meta">Published on <span th:text="${post.createAt}">Date</span></p>
-                    </div>
-                </a>
+    <div class="profile-section">
+        <div class="profile-image">
+            <img th:src="${blogUser.profileImageUrl}" alt="Profile Image" />
+        </div>
+        <div class="profile-info">
+            <h2 th:text="${blogUser.name}">User Name</h2>
+            <p th:text="'@' + ${blogUser.username}">Username</p>
+            <div class="follow-info">
+                <span th:text="${followerCount}">3</span> 팔로워
+                <span th:text="${followingCount}">0</span> 팔로잉
+            </div>
+            <div th:if="${blogUser.username != user.username}">
+                <button id="follow-btn" th:onclick="'toggleFollow(' + ${blogUser.id} + ')'" class="follow-button">
+                    <span th:text="${isFollowing ? '팔로우 취소' : '팔로우'}">팔로우</span>
+                </button>
             </div>
         </div>
-    </section>
+    </div>
+
+    <div class="cover-image" th:if="${blog != null && blog.coverImageUrl != null}">
+        <img th:src="${blog.coverImageUrl}" alt="Cover Image">
+    </div>
+
+    <div th:if="${blog == null}">
+        <p>No blog found.</p>
+    </div>
+
+    <div th:if="${blog != null}">
+        <section>
+            <h2>Posts</h2>
+            <div class="posts-grid">
+                <div th:each="post : ${posts}" class="post-card">
+                    <a th:href="@{'/post?username=' + ${user.username} + '&blogId=' + ${blog.id} + '&postId=' + ${post.id}}" class="post-link">
+                        <div class="post-content">
+                            <h3 th:text="${post.title}">Post Title</h3>
+                            <div th:if="${postService.extractFirstImageUrl(post.content) != null}" class="image-container">
+                                <img th:src="${postService.extractFirstImageUrl(post.content)}" alt="Post Image" class="post-image">
+                            </div>
+                            <div th:unless="${postService.extractFirstImageUrl(post.content) != null}" class="image-container">
+                                <img th:src="@{/images/default-image.png}" alt="Default Image" class="post-image">
+                            </div>
+                            <p class="post-meta">Published on <span th:text="${post.createAt}">Date</span></p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+    </div>
 </div>
-</div>
+<script src="/js/follow.js"></script>
 </body>
 </html>

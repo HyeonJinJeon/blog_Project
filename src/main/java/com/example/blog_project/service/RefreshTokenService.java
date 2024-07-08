@@ -23,4 +23,12 @@ public class RefreshTokenService {
     public void deleteRefreshToken(String refreshToken) {
         refreshTokenRepository.findByValue(refreshToken).ifPresent(refreshTokenRepository::delete);
     }
+
+    public void deleteRefreshToken(Long userId) {
+        refreshTokenRepository.findByUserId(userId).ifPresent(refreshTokenRepository::delete);
+    }
+
+    public boolean isRefreshTokenValid(String refreshToken) {
+        return refreshTokenRepository.existsByValue(refreshToken);
+    }
 }
