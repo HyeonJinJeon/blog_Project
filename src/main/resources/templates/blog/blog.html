@@ -23,7 +23,7 @@
                 <span th:text="${followingCount}">0</span> 팔로잉
             </div>
             <div th:if="${blogUser.username != user.username}">
-                <button id="follow-btn" th:onclick="'toggleFollow(' + ${blogUser.id} + ')'" class="follow-button">
+                <button id="follow-btn" class="follow-button">
                     <span th:text="${isFollowing ? '팔로우 취소' : '팔로우'}">팔로우</span>
                 </button>
             </div>
@@ -60,6 +60,30 @@
         </section>
     </div>
 </div>
-<script src="/js/follow.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const followBtn = document.getElementById('follow-btn');
+        const blogUserId = [[${blogUser.id}]];
+        const currentUserId = [[${user.id}]];
+        const isFollowing = [[${isFollowing}]];
+
+        async function toggleFollow() {
+            // const isFollowing = await fetch(`/api/follow/status?userId=${blogUserId}&followerId=${currentUserId}`)
+            //     .then(response => response.json());
+            console.log(isFollowing);
+
+            if (isFollowing) {
+                console.log("팔로우취소 들어와라 js")
+                await fetch(`/api/follow/${blogUserId}?followerId=${currentUserId}`, { method: 'DELETE' });
+                followBtn.textContent = '팔로우';
+            } else {
+                await fetch(`/api/follow/${blogUserId}?followerId=${currentUserId}`, { method: 'POST' });
+                followBtn.textContent = '팔로우 취소';
+            }
+        }
+
+        followBtn.addEventListener('click', toggleFollow);
+    });
+</script>
 </body>
 </html>

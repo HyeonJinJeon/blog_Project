@@ -41,7 +41,7 @@ public class SecurityConfig {
         http
                 // 인가 규칙을 설정합니다.
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/signUp", "/signIn", "/", "/css/**", "/js/**", "/images/**", "/api/login", "/api/logout").permitAll()
+                        .requestMatchers("/signUp", "/signIn", "/", "/css/**", "/js/**", "/images/**", "/api/login", "/api/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // UsernamePasswordAuthenticationFilter 앞에 JWT 인증 필터를 추가합니다.

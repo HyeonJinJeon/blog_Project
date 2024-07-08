@@ -2,6 +2,7 @@ package com.example.blog_project.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 @Table(name = "Followers")
 @Getter
 @Setter
+@NoArgsConstructor
 public class Follower {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,15 +26,5 @@ public class Follower {
     private User follower;
 
     @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt;
-
-    public Follower() {
-        this.createdAt = LocalDateTime.now();
-    }
-
-    public Follower(User user, User follower) {
-        this();
-        this.user = user;
-        this.follower = follower;
-    }
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

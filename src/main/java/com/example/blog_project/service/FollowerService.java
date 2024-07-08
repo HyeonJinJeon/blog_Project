@@ -1,53 +1,47 @@
 package com.example.blog_project.service;
 
-import com.example.blog_project.repository.FollowerRepository;
-import com.example.blog_project.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import com.example.blog_project.domain.User;
 import com.example.blog_project.domain.Follower;
-
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.blog_project.domain.User;
+import com.example.blog_project.repository.FollowerRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 public class FollowerService {
-
     private final FollowerRepository followerRepository;
-    private final UserRepository userRepository; // User 엔티티를 위한 리포지토리
+    private final UserService userService;
 
-    public void followUser(Long userId, Long followerId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        User follower = userRepository.findById(followerId).orElseThrow(() -> new IllegalArgumentException("Invalid follower ID"));
-
-        if (!followerRepository.existsByUserAndFollower(user, follower)) {
-            Follower newFollower = new Follower(user, follower);
-            followerRepository.save(newFollower);
-        }
+    public long getFollowerCount(Long userId) {
+        return followerRepository.countByUserId(userId);
     }
 
-    public void unfollowUser(Long userId, Long followerId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        User follower = userRepository.findById(followerId).orElseThrow(() -> new IllegalArgumentException("Invalid follower ID"));
-
-        if (followerRepository.existsByUserAndFollower(user, follower)) {
-            followerRepository.deleteByUserAndFollower(user, follower);
-        }
+    public long getFollowingCount(Long followerId) {
+        return followerRepository.countByFollowerId(followerId);
     }
 
     public boolean isFollowing(Long userId, Long followerId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        User follower = userRepository.findById(followerId).orElseThrow(() -> new IllegalArgumentException("Invalid follower ID"));
-        return followerRepository.existsByUserAndFollower(user, follower);
+        return followerRepository.existsByUserIdAndFollowerId(userId, followerId);
     }
 
-    public long getFollowerCount(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        return followerRepository.countByUser(user);
+    public void followUser(Long userId, Long followerId) {
+        System.out.println("들어오나");
+        System.out.println(userId);
+        System.out.println(followerId);
+        if (!isFollowing(userId, followerId)) {
+            System.out.println("팔로우 중이 아니므로 아래를 진행함");
+            Follower follower = new Follower();
+            User user = userService.getUser(userId).orElseThrow();
+            User followerUser = userService.getUser(followerId).orElseThrow();
+            follower.setUser(user);
+            follower.setFollower(followerUser);
+            followerRepository.save(follower);
+        }
     }
 
-    public long getFollowingCount(Long userId) {
-        User follower = userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Invalid user ID"));
-        return followerRepository.countByFollower(follower);
+    public void unfollowUser(Long blogId, Long followerId) {
+        if (isFollowing(followerId, blogId)) {
+            followerRepository.deleteByUserIdAndFollowerId(blogId, followerId);
+        }
     }
 }
