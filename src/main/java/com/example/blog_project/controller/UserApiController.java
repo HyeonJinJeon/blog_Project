@@ -64,6 +64,9 @@ public class UserApiController {
         //롤객체를 꺼내서 롤의 이름만 리스트로 얻어온다.
         List<String> roles = user.getRoles().stream().map(Role::getName).collect(Collectors.toList());
 
+        //로그아웃 할 떄 refreshToken이 삭제가 되지 않았을 경우를 대비해 로그인 할 떄 기존의 refreshToken을 제거해준다.(이중장치 느낌)
+        refreshTokenService.deleteRefreshToken(user.getId());
+
         //토큰 발급
         String accessToken = jwtTokenizer.createAccessToken(
                 user.getId(), user.getEmail(), user.getName(), user.getUsername(), roles);
@@ -157,7 +160,7 @@ public class UserApiController {
     }
 
     @GetMapping("/logout")
-    public void logout(@CookieValue(name = "accessToken", required = false) String accessToken, HttpServletResponse response) {
+    public void logout(@CookieValue(name = "accessToken", required = false) String accessToken, @CookieValue(name = "refreshToken", required = false) String refreshToken, HttpServletResponse response) {
         System.out.println("로그아웃 들어왔나");
         if (accessToken == null) {
             // accessToken이 존재하지 않으면 로그인되지 않은 상태로 간주하고 처리할 수 있습니다.
@@ -200,6 +203,9 @@ public class UserApiController {
         refresCcookie.setPath("/");
         refresCcookie.setMaxAge(0);
         response.addCookie(refresCcookie);
+
+        //로그아웃 전 db에 저장되어있는 refreshToken을 삭제한다.
+        refreshTokenService.deleteRefreshToken(refreshToken);
 
         // /signIn 페이지로 리디렉션
         try {
