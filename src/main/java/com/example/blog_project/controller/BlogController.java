@@ -4,10 +4,9 @@ import com.example.blog_project.domain.Blog;
 import com.example.blog_project.domain.User;
 import com.example.blog_project.domain.Post;
 import com.example.blog_project.service.BlogService;
-import com.example.blog_project.service.FollowerService;
+import com.example.blog_project.service.FollowService;
 import com.example.blog_project.service.PostService;
 import com.example.blog_project.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,7 +23,7 @@ public class BlogController {
     private final BlogService blogService;
     private final PostService postService;
     private final UserService userService;
-    private final FollowerService followerService;
+    private final FollowService followService;
 
     //블로그 페이지 매핑
     @GetMapping("/blog")
@@ -57,9 +56,9 @@ public class BlogController {
         model.addAttribute("blog", blog);
         model.addAttribute("postService", postService);
 
-        long followerCount = followerService.getFollowerCount(blogUser.getId());
-        long followingCount = followerService.getFollowingCount(blogUser.getId());
-        boolean isFollowing = followerService.isFollowing(blogUser.getId(), user.getId());
+        long followerCount = followService.getFollowerCount(blogUser.getId());
+        long followingCount = followService.getFollowingCount(blogUser.getId());
+        boolean isFollowing = followService.isFollowing(blogUser.getId(), user.getId());
         System.out.println("user: " + user.getId());
         System.out.println("blogUser: " +  blogUser.getId());
         System.out.println("isFollowing: " + isFollowing);

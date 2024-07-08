@@ -8,23 +8,20 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Followers")
+@Table(name = "Follows")
 @Getter
 @Setter
 @NoArgsConstructor
-public class Follower {
+public class Follow {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "blog_user_id", nullable = false)
+    private User blogUser;
 
     @ManyToOne
-    @JoinColumn(name = "follower_id", nullable = false)
-    private User follower;
-
-    @Column(name = "created_at", nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    @JoinColumn(name = "current_user_id", nullable = false)
+    private User currentUser;
 }

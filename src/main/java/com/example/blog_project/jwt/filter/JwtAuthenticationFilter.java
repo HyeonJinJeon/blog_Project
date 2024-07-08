@@ -39,7 +39,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     // 인증 없이 접근할 수 있는 경로 목록
     private static final List<String> PERMIT_ALL_PATHS = List.of(
-            "/signUp", "/signIn", "/", "/css/.*", "/js/.*", "/images/.*", "/api/login", "/api/logout"
+            "/signUp", "/signIn", "/", "/css/.*", "/js/.*", "/images/.*", "/api/login", "/api/.*"
             // 추가적으로 permitAll 경로들을 여기에 추가
     );
 

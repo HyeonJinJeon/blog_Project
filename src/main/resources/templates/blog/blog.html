@@ -64,7 +64,7 @@
     document.addEventListener('DOMContentLoaded', function () {
         const followBtn = document.getElementById('follow-btn');
         const blogUserId = [[${blogUser.id}]];
-        const currentUserId = [[${user.id}]];
+        const userId = [[${user.id}]];
         const isFollowing = [[${isFollowing}]];
 
         async function toggleFollow() {
@@ -74,10 +74,10 @@
 
             if (isFollowing) {
                 console.log("팔로우취소 들어와라 js")
-                await fetch(`/api/follow/${blogUserId}?followerId=${currentUserId}`, { method: 'DELETE' });
+                await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'DELETE' });
                 followBtn.textContent = '팔로우';
             } else {
-                await fetch(`/api/follow/${blogUserId}?followerId=${currentUserId}`, { method: 'POST' });
+                await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'POST' });
                 followBtn.textContent = '팔로우 취소';
             }
         }
