@@ -40,8 +40,9 @@ public class UserController {
         model.addAttribute("user", new User());
         return "user/signUp";
     }
+
     @PostMapping("/signUp")
-    public String signUp(@ModelAttribute User user,  @RequestParam("profileImage") MultipartFile profileImage, RedirectAttributes redirectAttributes) {
+    public String signUp(@ModelAttribute User user, @RequestParam("profileImage") MultipartFile profileImage, RedirectAttributes redirectAttributes) {
         //@RequestParam은 폼 데이터를 추출할 때 HTTP POST 요청에서 폼 데이터에서 파라미터 값을 가져오는 데 사용됨
         // MultipartFile 프로필 이미지를 post로 받아와서 저장할 수 있도록 함
         String profileImagePath = null;
@@ -64,7 +65,7 @@ public class UserController {
         Role role = roleService.getRole(1L);
         user.getRoles().add(role);
         userService.createUser(user);
-        blogService.createBlog(user.getUsername(), user.getUsername()+".log");
+        blogService.createBlog(user.getUsername(), user.getUsername() + ".log");
         return "redirect:/signIn";
     }
 
@@ -74,10 +75,11 @@ public class UserController {
         model.addAttribute("user", new User());
         return "user/signIn";
     }
+
     @PostMapping("/signIn")
     public String signIn(@ModelAttribute User user, HttpServletResponse response, HttpServletRequest request) {
         boolean isUser = userService.authenticateByEmail(user.getUsername(), user.getPassword());
-        if(isUser){
+        if (isUser) {
             //관리자 Role을 가져온다
             Role adminRole = roleService.getRole(2L);
             //관리자 Role이 포함되어 있는지 안되어 있는지 확인한다.
@@ -94,12 +96,12 @@ public class UserController {
                 }
             }
 
-            if(isAdmin){ //만약 관리자의 Role이 있다면
+            if (isAdmin) { //만약 관리자의 Role이 있다면
                 return "redirect:/admin";
-            }else {
+            } else {
                 return "redirect:/blog?username=" + user.getUsername();
             }
-        }else{
+        } else {
             return "redirect:/signIn";
         }
     }
@@ -111,14 +113,4 @@ public class UserController {
         model.addAttribute("user", user);
         return "/main";
     }
-
-//    @GetMapping("/logout")
-//    public String logOut(HttpServletResponse response) {
-//        Cookie cookie = new Cookie("user", null);
-//        cookie.setMaxAge(0);
-//        cookie.setPath("/");
-//        response.addCookie(cookie);
-//
-//        return "redirect:/signIn";
-//    }
 }
