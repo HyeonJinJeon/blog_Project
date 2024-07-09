@@ -14,13 +14,13 @@ public class FollowService {
     private final UserService userService;
 
     @Transactional
-    public long getFollowerCount(Long userId) {
-        return followRepository.countByCurrentUserId(userId);
+    public long getFollowerCount(Long blogUserId) {
+        return followRepository.countByBlogUserId(blogUserId);
     }
 
     @Transactional
-    public long getFollowingCount(Long blogUserId) {
-        return followRepository.countByBlogUserId(blogUserId);
+    public long getFollowingCount(Long userId) {
+        return followRepository.countByCurrentUserId(userId);
     }
 
     @Transactional
