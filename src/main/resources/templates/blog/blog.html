@@ -18,15 +18,14 @@
         <div class="profile-info">
             <h2 th:text="${blogUser.name}">User Name</h2>
             <p th:text="${blogUser.username}">Username</p>
-            <div class="follow-info">
-                <span th:text="${followerCount}">3</span> 팔로워
-                <span th:text="${followingCount}">0</span> 팔로잉
-            </div>
-            <div th:if="${blogUser.username != user.username}">
-                <button id="follow-btn" class="follow-button">
-                    <span th:text="${isFollowing ? '팔로우 취소' : '팔로우'}">팔로우</span>
-                </button>
-            </div>
+        </div>
+        <div class="follow-info">
+            <span th:text="${followerCount}">3</span> 팔로워
+            <span th:text="${followingCount}">0</span> 팔로잉
+            <span>&nbsp;</span>
+            <button th:if="${blogUser.username != user.username}" id="follow-btn" class="follow-button">
+                <span th:text="${isFollowing ? '팔로우 취소' : '팔로우'}">팔로우</span>
+            </button>
         </div>
     </div>
 
@@ -42,7 +41,7 @@
         <section>
             <div class="tab-menu">
                 <a href="#" class="active">글</a>
-                <a href="#">시리즈</a>
+                <a th:href="@{'/blog/series?username=' + ${blogUser.username}}">시리즈</a>
                 <a href="#">소개</a>
             </div>
             <div class="search-bar">
