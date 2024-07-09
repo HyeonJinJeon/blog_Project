@@ -17,7 +17,7 @@
         </div>
         <div class="profile-info">
             <h2 th:text="${blogUser.name}">User Name</h2>
-            <p th:text="'@' + ${blogUser.username}">Username</p>
+            <p th:text="${blogUser.username}">Username</p>
             <div class="follow-info">
                 <span th:text="${followerCount}">3</span> 팔로워
                 <span th:text="${followingCount}">0</span> 팔로잉
@@ -40,7 +40,16 @@
 
     <div th:if="${blog != null}">
         <section>
-            <h2>Posts</h2>
+            <div class="tab-menu">
+                <a href="#" class="active">글</a>
+                <a href="#">시리즈</a>
+                <a href="#">소개</a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="검색어를 입력하세요">
+                <button>검색</button>
+            </div>
+<!--            <h2>Posts</h2>-->
             <div class="posts-grid">
                 <div th:each="post : ${posts}" class="post-card">
                     <a th:href="@{'/post?username=' + ${user.username} + '&blogId=' + ${blog.id} + '&postId=' + ${post.id}}" class="post-link">
@@ -68,12 +77,7 @@
         const isFollowing = [[${isFollowing}]];
 
         async function toggleFollow() {
-            // const isFollowing = await fetch(`/api/follow/status?userId=${blogUserId}&followerId=${currentUserId}`)
-            //     .then(response => response.json());
-            console.log(isFollowing);
-
             if (isFollowing) {
-                console.log("팔로우취소 들어와라 js")
                 await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'DELETE' });
                 followBtn.textContent = '팔로우';
             } else {
