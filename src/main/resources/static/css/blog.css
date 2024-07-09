@@ -26,46 +26,46 @@ header p {
     color: #a5a5a5;
 }
 
-.bodyContent{
+.bodyContent {
     margin: 0 auto;
     width: 1100px;
 }
 
-/* 네비게이션 바 스타일 */
-nav.navbar {
-    background-color: #2a2a2a;
-    border-bottom: 1px solid #444;
-}
+/*!* 네비게이션 바 스타일 *!*/
+/*nav.navbar {*/
+/*    background-color: #2a2a2a;*/
+/*    border-bottom: 1px solid #444;*/
+/*}*/
 
-nav.navbar .navbar-brand {
-    color: #eaeaea;
-    font-size: 1.5em;
-}
+/*nav.navbar .navbar-brand {*/
+/*    color: #eaeaea;*/
+/*    font-size: 1.5em;*/
+/*}*/
 
-nav.navbar .navbar-brand:hover {
-    color: #ffffff;
-}
+/*nav.navbar .navbar-brand:hover {*/
+/*    color: #ffffff;*/
+/*}*/
 
-nav.navbar .navbar-toggler {
-    border-color: #444;
-}
+/*nav.navbar .navbar-toggler {*/
+/*    border-color: #444;*/
+/*}*/
 
-nav.navbar .navbar-toggler-icon {
-    background-color: #eaeaea;
-}
+/*nav.navbar .navbar-toggler-icon {*/
+/*    background-color: #eaeaea;*/
+/*}*/
 
-nav.navbar .navbar-collapse {
-    justify-content: space-between;
-}
+/*nav.navbar .navbar-collapse {*/
+/*    justify-content: space-between;*/
+/*}*/
 
-nav.navbar .navbar-nav .nav-item .nav-link {
-    color: #eaeaea;
-    font-size: 1.1em;
-}
+/*nav.navbar .navbar-nav .nav-item .nav-link {*/
+/*    color: #eaeaea;*/
+/*    font-size: 1.1em;*/
+/*}*/
 
-nav.navbar .navbar-nav .nav-item .nav-link:hover {
-    color: #ffffff;
-}
+/*nav.navbar .navbar-nav .nav-item .nav-link:hover {*/
+/*    color: #ffffff;*/
+/*}*/
 
 /* 로그인 및 새 글 작성 버튼 스타일 */
 #userCheck .btn {
@@ -102,6 +102,10 @@ nav.navbar .navbar-nav .nav-item .nav-link:hover {
     margin-right: 20px;
 }
 
+.profile-info {
+    flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
+}
+
 .profile-info h2 {
     margin: 0;
     font-size: 1.5em;
@@ -120,20 +124,22 @@ nav.navbar .navbar-nav .nav-item .nav-link:hover {
 }
 
 .follow-button {
-    padding: 10px 20px;
+    padding: 5px 10px; /* 크기 줄이기 */
     background-color: #1b1b1b;
     color: white;
     border: 1px solid #eaeaea;
     border-radius: 20px;
     cursor: pointer;
-    font-size: 1em;
+    font-size: 0.8em;
     transition: background-color 0.3s ease, color 0.3s ease;
+    margin-left: auto; /* 오른쪽 끝으로 이동 */
 }
 
 .follow-button:hover {
     background-color: #333333;
     color: #ffffff;
 }
+
 
 /* 커버 이미지 스타일 */
 .cover-image img {
