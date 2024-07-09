@@ -3,36 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <title>My Blog</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.4.0/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="styles.css"> <!-- 여기에 스타일 시트를 링크하세요 -->
 </head>
 <body>
 <div th:fragment="headerFragment">
-<nav class="navbar">
-    <div class="container">
-        <a class="brand" href="/" th:text="${blog != null} ? ${blog.title} : 'My Blog'">My Blog</a>
-        <ul class="nav-links">
-            <li><a class="nav-link" href="/search"><i class="bi bi-search"></i></a></li>
-            <li><a class="nav-link" href="/notifications"><i class="bi bi-bell"></i></a></li>
-        </ul>
-        <div class="user-section" th:if="${user != null}">
-            <a href="#" class="profile-link">
-                <img th:src="${user.profileImageUrl}" alt="Profile Image" class="profile-img" id="profileImage" onclick="toggleDropdown()">
-            </a>
-            <div class="header-dropdown" id="dropdownMenu">
-                <a th:href="@{'/@' + ${user.username}}">내 블로그</a>
-                <a th:href="@{/posting}">임시 글</a>
-                <a th:href="@{/read}">읽기 목록</a>
-                <a th:href="@{/setting}">설정</a>
-                <a th:href="@{/api/logout}">로그아웃</a>
+    <nav class="navbar">
+        <div class="container">
+            <a class="brand" href="/" th:text="${blog != null} ? ${blog.title} : 'My Blog'">My Blog</a>
+            <ul class="nav-links">
+                <li><a class="nav-link" href="/search"><i class="bi bi-search"></i></a></li>
+                <li><a class="nav-link" href="/notifications"><i class="bi bi-bell"></i></a></li>
+            </ul>
+            <div class="user-actions">
+                <div class="create-post" th:if="${user != null}">
+                    <a th:href="@{/post/new}">새 글 작성</a>
+                </div>
+                <div class="user-section" th:if="${user != null}">
+                    <a href="#" class="profile-link">
+                        <img th:src="${user.profileImageUrl}" alt="Profile Image" class="profile-img" id="profileImage" onclick="toggleDropdown()">
+                    </a>
+                    <div class="header-dropdown" id="dropdownMenu">
+                        <a th:href="@{'/blog?username=' + ${user.username}}">내 블로그</a>
+                        <a th:href="@{/posting}">임시 글</a>
+                        <a th:href="@{/read}">읽기 목록</a>
+                        <a th:href="@{/setting}">설정</a>
+                        <a th:href="@{/api/logout}">로그아웃</a>
+                    </div>
+                </div>
+                <div class="login-section" th:if="${user == null}">
+                    <form th:action="@{/user/loginform}">
+                        <button class="login-btn" type="submit">로그인</button>
+                    </form>
+                </div>
             </div>
         </div>
-        <div class="login-section" th:if="${user == null}">
-            <form th:action="@{/user/loginform}">
-                <button class="login-btn" type="submit">로그인</button>
-            </form>
-        </div>
-    </div>
-</nav>
+    </nav>
 </div>
+<script>
+    function toggleDropdown() {
+        var dropdownMenu = document.getElementById("dropdownMenu");
+        dropdownMenu.classList.toggle("show");
+    }
+</script>
 </body>
 </html>
-
