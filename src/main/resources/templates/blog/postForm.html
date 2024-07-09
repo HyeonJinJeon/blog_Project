@@ -1,30 +1,37 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>Create New Post</title>
+    <title>새 글 작성</title>
     <link rel="stylesheet" href="/css/post.css">
     <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
 </head>
 <body>
 <header>
-    <h1>Create a New Post</h1>
+    <h1>새 글 작성</h1>
 </header>
 <section>
     <form id="postForm" action="/posts" method="post">
         <div class="form-group">
-            <label for="title">Title:</label>
+            <label for="title">제목:</label>
             <input type="text" id="title" name="title" required>
         </div>
         <div class="form-group">
-            <label for="content">Content:</label>
+            <label for="content">내용:</label>
             <textarea id="content" name="content" style="display: none;"></textarea>
         </div>
         <div class="form-group">
-            <label for="seriesId">Series (optional):</label>
-            <input type="text" id="seriesId" name="seriesId">
+            <label for="seriesId">시리즈 (선택 사항):</label>
+            <select id="seriesId" name="seriesId">
+                <option value="">시리즈를 선택하세요</option>
+                <!-- 타임리프를 이용하여 seriesList를 옵션으로 추가 -->
+                <th:block th:each="series : ${seriesList}">
+                    <option th:value="${series.id}" th:text="${series.title}"></option>
+                </th:block>
+            </select>
+            <input type="hidden" id="series" name="seriesId" th:field="*{post.series}">
         </div>
-        <button type="submit">Create Post</button>
+        <button type="submit">글 작성</button>
     </form>
 </section>
 <script>
@@ -44,7 +51,7 @@
                 // 데이터가 비어 있는지 확인
                 if (!content.trim()) {
                     // 오류 메시지 출력
-                    alert('Content is required.');
+                    alert('내용을 입력하세요.');
                     event.preventDefault();
                 }
             });
@@ -52,6 +59,11 @@
         .catch(error => {
             console.error(error);
         });
+
+    // seriesId 선택 시 숨겨진 input에 값 설정
+    document.querySelector('#seriesId').addEventListener('change', (event) => {
+        document.querySelector('#series').value = event.target.value;
+    });
 </script>
 </body>
 </html>

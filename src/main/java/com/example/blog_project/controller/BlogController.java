@@ -1,12 +1,10 @@
 package com.example.blog_project.controller;
 
 import com.example.blog_project.domain.Blog;
+import com.example.blog_project.domain.Series;
 import com.example.blog_project.domain.User;
 import com.example.blog_project.domain.Post;
-import com.example.blog_project.service.BlogService;
-import com.example.blog_project.service.FollowService;
-import com.example.blog_project.service.PostService;
-import com.example.blog_project.service.UserService;
+import com.example.blog_project.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -24,6 +22,7 @@ public class BlogController {
     private final PostService postService;
     private final UserService userService;
     private final FollowService followService;
+    private final SeriesService seriesService;
 
     //블로그 페이지 매핑
     @GetMapping("/blog")
@@ -67,6 +66,42 @@ public class BlogController {
         model.addAttribute("isFollowing", isFollowing);
 
         return "blog/blog";
+    }
+
+    @GetMapping("/blog/series")
+    public String getSeries(@RequestParam(value = "username") String blogUsername, Model model, Authentication authentication) {
+        // 현재 로그인한 사용자 정보 가져오기
+
+        System.out.println("시리즈 가져오나");
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String myUsername = userDetails.getUsername();
+        User user = userService.findUserByUsername(myUsername);
+
+        User blogUser = userService.findUserByUsername(blogUsername);
+        Long blogUserId = blogUser.getId();
+        Blog blog = blogService.getBlogByUserId(blogUserId);
+
+        // 기본 프로필 이미지 URL 설정
+        if (blogUser.getProfileImageUrl() == null || blogUser.getProfileImageUrl().isEmpty()) {
+            blogUser.setProfileImageUrl("/Users/jeonhyeonjin/blog_project/dev-jeans.png");
+        }
+
+        // 시리즈 목록 가져오기
+        List<Series> seriesList = seriesService.getSeriesByBlogId(blog.getId());
+        model.addAttribute("seriesList", seriesList);
+
+        model.addAttribute("user", user);
+        model.addAttribute("blogUser", blogUser);
+        model.addAttribute("blog", blog);
+
+        long followerCount = followService.getFollowerCount(blogUser.getId());
+        long followingCount = followService.getFollowingCount(blogUser.getId());
+        boolean isFollowing = followService.isFollowing(blogUser.getId(), user.getId());
+        model.addAttribute("followerCount", followerCount);
+        model.addAttribute("followingCount", followingCount);
+        model.addAttribute("isFollowing", isFollowing);
+
+        return "blog/series";
     }
 
     //헤더 파일 매핑

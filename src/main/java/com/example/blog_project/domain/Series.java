@@ -1,9 +1,15 @@
 package com.example.blog_project.domain;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "Series")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Series {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
