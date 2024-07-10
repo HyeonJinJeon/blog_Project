@@ -11,6 +11,7 @@ import org.jsoup.select.Elements;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +53,13 @@ public class PostService {
 
     public Post getPostByBlogIdAndPostId(Long blogId, Long postId) {
         return postRepository.findByBlogIdAndId(blogId, postId);
+    }
+
+    public List<Post> getPostBySeriesId(Long seriesId) {
+        return postRepository.findBySeriesId(seriesId);
+    }
+
+    public Post getPostById(Long postId) {
+        return postRepository.findById(postId).orElse(null);
     }
 }
