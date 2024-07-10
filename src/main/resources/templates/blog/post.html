@@ -1,18 +1,58 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title th:text="${post.title}">Post Title</title>
     <link rel="stylesheet" href="/css/post.css">
+    <script src="/js/reply.js"></script>
+    <script src="/js/header.js"></script>
+    <link rel="stylesheet" href="/css/header.css">
 </head>
 <body>
+<th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
+
 <header>
     <h1 th:text="${post.title}">Post Title</h1>
-    <p class="post-meta">Published on <span th:text="${post.createAt}">Date</span> by <span th:text="${user.username}">Author</span></p>
+    <p class="post-meta">Published on <span th:text="${post.createdAt}">Date</span> by <span th:text="${user.username}">Author</span></p>
 </header>
 <div class="content">
     <div class="post-content" th:utext="${post.content}">
         <!-- 포스트 내용이 여기에 표시됩니다. -->
+    </div>
+
+    <div class="comments-section">
+        <h2>Comments</h2>
+        <div th:each="comment : ${commentList}" class="comment">
+            <p th:text="${comment.content}">Comment content</p>
+            <p class="comment-meta">By <span th:text="${comment.user.username}">User</span> on <span th:text="${comment.createdAt}">Date</span></p>
+
+            <button onclick="toggleReplies(this)" class="reply-button">대댓글 보기</button>
+
+            <div class="replies-section" style="display: none;">
+                <div th:if="${!comment.repliesList.isEmpty()}" class="replies">
+                    <h3>Replies</h3>
+                    <div th:each="reply : ${comment.repliesList}" class="reply">
+                        <p th:text="${reply.content}">Reply content</p>
+                        <p class="reply-meta">By <span th:text="${reply.user.username}">User</span> on <span th:text="${reply.createdAt}">Date</span></p>
+                    </div>
+                </div>
+
+                <!-- 대댓글 작성 폼 -->
+                <div class="add-reply">
+                    <h3>Add a Reply</h3>
+                    <form th:action="@{/addReply(commentId=${comment.id}, username=${user.username})}" th:object="${createReply}" method="post">
+                        <textarea th:field="*{content}" placeholder="Write your reply here"></textarea>
+                        <button type="submit">Submit</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <h3>Add a Comment</h3>
+        <form th:action="@{/addComment(postId=${post.id}, username=${user.username})}" th:object="${createComment}" method="post">
+            <textarea th:field="*{content}" placeholder="Write your comment here"></textarea>
+            <button type="submit">Submit</button>
+        </form>
     </div>
 </div>
 </body>
