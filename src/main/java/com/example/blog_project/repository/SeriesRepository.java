@@ -9,4 +9,6 @@ import java.util.List;
 @Repository
 public interface SeriesRepository extends JpaRepository<Series, Long> {
     List<Series> findByBlogId(Long blogId);
+
+    Series findByTitleAndBlogId(String seriesName, Long blogId);
 }

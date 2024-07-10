@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org/">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="'시리즈: ' + ${series.title}">시리즈 상세</title>
+    <link rel="stylesheet" href="/css/series-detail.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <script src="/js/header.js"></script>
+</head>
+<body>
+<div class="bodyContent">
+    <header th:replace="~{fragments/header :: headerFragment}"></header>
+
+    <div class="series-header">
+        <h3>시리즈</h3>
+        <h1 th:text="${series.title}">test</h1>
+    </div>
+    <div class="series-actions">
+        <button class="action-btn">수정</button>
+        <button class="action-btn">삭제</button>
+        <button class="action-btn">오름차순</button>
+    </div>
+
+    <div class="posts-grid">
+        <div th:each="post, iter : ${posts}" class="post-card">
+            <span class="post-index" th:text="${iter.index + 1} + '.'">1.</span>
+            <a th:href="@{'/post?username=' + ${user.username} + '&blogId=' + ${blog.id} + '&postId=' + ${post.id}}" class="post-link">
+                <div th:if="${postService.extractFirstImageUrl(post.content) != null}" class="image-container">
+                    <img th:src="${postService.extractFirstImageUrl(post.content)}" alt="Post Image" class="post-image">
+                </div>
+                <div th:unless="${postService.extractFirstImageUrl(post.content) != null}" class="image-container">
+                    <img th:src="@{/images/default-image.png}" alt="Default Image" class="post-image">
+                </div>
+                <div class="post-content">
+                    <h3 th:text="${post.title}">Post Title</h3>
+                    <p class="post-meta" th:text="${post.createdAt}">Date</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        console.log("페이지 로드 완료");
+    });
+</script>
+</body>
+</html>

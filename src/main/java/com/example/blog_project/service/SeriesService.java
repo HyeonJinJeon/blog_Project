@@ -15,4 +15,13 @@ public class SeriesService {
     public List<Series> getSeriesByBlogId(Long blogId) {
         return seriesRepository.findByBlogId(blogId);
     }
+
+    public Series getSeriesById(Long seriesId) {
+        return seriesRepository.findById(seriesId).orElse(null);
+    }
+
+    public Series getSeriesByTitleAndBlogId(String title, Long blogId) {
+        return seriesRepository.findByTitleAndBlogId(title, blogId);
+    }
+
 }

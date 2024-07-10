@@ -7,7 +7,6 @@
   <script src="/js/header.js"></script>
   <link rel="stylesheet" href="/css/series.css">
   <link rel="stylesheet" href="/css/header.css">
-
 </head>
 <body>
 <div class="bodyContent">
@@ -22,7 +21,7 @@
       <p th:text="${blogUser.username}">Username</p>
     </div>
     <div class="follow-info">
-      <span th:text="${followerCount}">3</span> 팔로워
+      <span id="followerCount" th:text="${followerCount}">3</span> 팔로워
       <span th:text="${followingCount}">0</span> 팔로잉
       <span>&nbsp;</span>
       <button th:if="${blogUser.username != user.username}" id="follow-btn" class="follow-button">
@@ -43,13 +42,13 @@
     <section>
       <div class="tab-menu">
         <a th:href="@{'/blog?username=' + ${blogUser.username}}">글</a>
-        <a href="/blog/series?username=${blogUser.username}" class="active">시리즈</a>
+        <a th:href="@{'/blog/series?username=' + ${blogUser.username}}" class="active">시리즈</a>
         <a href="#">소개</a>
       </div>
-<!--      <h2>Series</h2>-->
+      <!--      <h2>Series</h2>-->
       <div class="series-grid">
         <div th:each="series : ${seriesList}" class="series-card">
-          <a th:href="@{'/series/' + ${series.id}}" class="series-link">
+          <a th:href="@{|/blog/series/${series.title}?username=${blogUser.username}|}" class="series-link">
             <div class="series-content">
               <h3 th:text="${series.title}">Series Title</h3>
               <div th:if="${series.coverImageUrl != null}" class="image-container">
@@ -65,5 +64,40 @@
     </section>
   </div>
 </div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const followBtn = document.getElementById('follow-btn');
+    const followerCountElement = document.getElementById('followerCount');
+    let followerCount = parseInt(followerCountElement.textContent);
+    const blogUserId = [[${blogUser.id}]];
+    const userId = [[${user.id}]];
+    let isFollowing = [[${isFollowing}]];
+
+    async function toggleFollow() {
+      try {
+        if (isFollowing) {
+          const response = await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'DELETE' });
+          if (response.ok) {
+            followBtn.textContent = '팔로우';
+            isFollowing = false;
+            followerCount--;
+          }
+        } else {
+          const response = await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'POST' });
+          if (response.ok) {
+            followBtn.textContent = '팔로우 취소';
+            isFollowing = true;
+            followerCount++;
+          }
+        }
+        followerCountElement.textContent = followerCount;
+      } catch (error) {
+        console.error('팔로우 상태를 변경하는 중 오류가 발생했습니다.', error);
+      }
+    }
+
+    followBtn.addEventListener('click', toggleFollow);
+  });
+</script>
 </body>
 </html>
