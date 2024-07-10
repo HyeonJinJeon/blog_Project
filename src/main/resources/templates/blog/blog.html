@@ -20,7 +20,7 @@
             <p th:text="${blogUser.username}">Username</p>
         </div>
         <div class="follow-info">
-            <span th:text="${followerCount}">3</span> 팔로워
+            <span id="followerCount" th:text="${followerCount}">3</span> 팔로워
             <span th:text="${followingCount}">0</span> 팔로잉
             <span>&nbsp;</span>
             <button th:if="${blogUser.username != user.username}" id="follow-btn" class="follow-button">
@@ -48,7 +48,7 @@
                 <input type="text" placeholder="검색어를 입력하세요">
                 <button>검색</button>
             </div>
-<!--            <h2>Posts</h2>-->
+            <!--            <h2>Posts</h2>-->
             <div class="posts-grid">
                 <div th:each="post : ${posts}" class="post-card">
                     <a th:href="@{'/post?username=' + ${user.username} + '&blogId=' + ${blog.id} + '&postId=' + ${post.id}}" class="post-link">
@@ -60,7 +60,7 @@
                             <div th:unless="${postService.extractFirstImageUrl(post.content) != null}" class="image-container">
                                 <img th:src="@{/images/default-image.png}" alt="Default Image" class="post-image">
                             </div>
-                            <p class="post-meta">Published on <span th:text="${post.createAt}">Date</span></p>
+                            <p class="post-meta">Published on <span th:text="${post.createdAt}">Date</span></p>
                         </div>
                     </a>
                 </div>
@@ -70,18 +70,34 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        console.log("버튼 클릭")
         const followBtn = document.getElementById('follow-btn');
+        const followerCountElement = document.getElementById('followerCount');
+        let followerCount = parseInt(followerCountElement.textContent);
         const blogUserId = [[${blogUser.id}]];
         const userId = [[${user.id}]];
-        const isFollowing = [[${isFollowing}]];
+        let isFollowing = [[${isFollowing}]];
 
         async function toggleFollow() {
-            if (isFollowing) {
-                await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'DELETE' });
-                followBtn.textContent = '팔로우';
-            } else {
-                await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'POST' });
-                followBtn.textContent = '팔로우 취소';
+            try {
+                if (isFollowing) {
+                    const response = await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'DELETE' });
+                    if (response.ok) {
+                        followBtn.textContent = '팔로우';
+                        isFollowing = false;
+                        followerCount--;
+                    }
+                } else {
+                    const response = await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'POST' });
+                    if (response.ok) {
+                        followBtn.textContent = '팔로우 취소';
+                        isFollowing = true;
+                        followerCount++;
+                    }
+                }
+                followerCountElement.textContent = followerCount;
+            } catch (error) {
+                console.error('팔로우 상태를 변경하는 중 오류가 발생했습니다.', error);
             }
         }
 
