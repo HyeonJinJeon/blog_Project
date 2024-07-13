@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,6 +28,8 @@ public class PostController {
     private final SeriesService seriesService;
     private final CommentService commentService;
     private final ReplyService replyService;
+    private final LikeService likeService;
+    private final TagService tagService;
 
     //post 작성
     @GetMapping("/post/new")
@@ -37,16 +41,24 @@ public class PostController {
         List<Series> seriesList = seriesService.getSeriesByBlogId(blog.getId());
         model.addAttribute("post", new Post());
         model.addAttribute("seriesList", seriesList);
+        model.addAttribute("tag", new Tag());
         return "blog/postForm";
     }
     @PostMapping("/posts")
-    public String createPost(@ModelAttribute Post post, HttpServletRequest request, Authentication authentication) {
+    public String createPost(@ModelAttribute Post post, @RequestParam("tags") String tags, HttpServletRequest request, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String myUsername = userDetails.getUsername();
+
         User user = userService.findUserByUsername(myUsername);
         Blog blog = blogService.getBlogByUserId(user.getId());
         post.setBlog(blog);
 
+        System.out.println(tags);
+        // 태그 파싱 및 설정
+        Set<Tag> tagSet = tagService.parseTags(tags);
+        post.setTagSet(tagSet);
+
+        // 포스트 저장
         postService.savePost(post);
 
         return "redirect:/blog?username=" + myUsername;
@@ -62,11 +74,18 @@ public class PostController {
         Comment createComment = new Comment();
         Reply createReply = new Reply();
 
+        List<Like> likeList = likeService.getLikeByPostId(postId);
+        int likeCount = likeList.size();
+
+        boolean isLiked = likeService.getIsLike(user, post);
+
         model.addAttribute("post", post);
         model.addAttribute("user", user);
         model.addAttribute("commentList", commentList); // comments 추가
         model.addAttribute("createComment", createComment);
         model.addAttribute("createReply", createReply);
+        model.addAttribute("likeCount", likeCount);
+        model.addAttribute("isLiked", isLiked);
 
         return "blog/post";
     }
@@ -105,5 +124,4 @@ public class PostController {
 
         return "redirect:/post?username=" + username + "&blogId=" + blogId + "&postId=" + postId;
     }
-
 }

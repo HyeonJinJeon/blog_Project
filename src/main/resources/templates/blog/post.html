@@ -6,7 +6,9 @@
     <link rel="stylesheet" href="/css/post.css">
     <script src="/js/reply.js"></script>
     <script src="/js/header.js"></script>
+    <script src="/js/like.js"></script>
     <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 </head>
 <body>
 <th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
@@ -18,6 +20,18 @@
 <div class="content">
     <div class="post-content" th:utext="${post.content}">
         <!-- 포스트 내용이 여기에 표시됩니다. -->
+    </div>
+
+    <div class="tags-section">
+        <h2>Tags</h2>
+        <ul>
+            <li th:each="tag : ${post.tagSet}">
+                <a th:href="@{'/posts/tag/' + ${tag.name}}" th:text="${tag.name}">Tag Name</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="like-section" onclick="toggleLike()">
     </div>
 
     <div class="comments-section">
@@ -55,5 +69,66 @@
         </form>
     </div>
 </div>
+
+<script>
+    let isLiked = [[${isLiked}]];
+    let likeCount = [[${likeCount}]];
+
+    document.addEventListener('DOMContentLoaded', function() {
+        let likeSection = document.querySelector(".like-section");
+        let likeCountSpan = document.getElementById('post-like-count');
+
+        if (isLiked) {
+            likeSection.innerHTML += `
+            <i class="bi bi-heart-fill unlike-btn" id="unLikeBtn" style="font-size: 2rem; cursor: pointer; color: red;"></i>
+            <i class="bi bi-heart unlike-btn" id="likeBtn" style="font-size: 2rem; cursor: pointer; display: none;"></i>
+            <span class="like-count" id="post-like-count">${likeCount}</span>`;
+        } else {
+            likeSection.innerHTML += `
+            <i class="bi bi-heart-fill unlike-btn" id="unLikeBtn" style="font-size: 2rem; cursor: pointer; color: red; display: none;"></i>
+            <i class="bi bi-heart unlike-btn" id="likeBtn" style="font-size: 2rem; cursor: pointer;"></i>
+            <span class="like-count" id="post-like-count">${likeCount}</span>`;
+        }
+    });
+
+    function toggleLike() {
+        let likeSection = document.querySelector('.like-section');
+        let postId = [[${post.id}]];
+        let endpoint = isLiked ? `/remove/like?postId=${postId}` : `/add/like?postId=${postId}`;
+        let method = isLiked ? 'DELETE' : 'POST';
+
+        fetch(endpoint, {method: method})
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+
+                let likeButton = document.getElementById('likeBtn');
+                let unLikeButton = document.getElementById('unLikeBtn');
+
+                if (data.liked) {
+                    likeCount++;
+                    isLiked = true;
+                    likeButton.style.display = 'none';
+                    unLikeButton.style.display = 'inline';
+                } else {
+                    likeCount--;
+                    isLiked = false;
+                    likeButton.style.display = 'inline';
+                    unLikeButton.style.display = 'none';
+                }
+
+                let likeCountSpan = document.getElementById('post-like-count');
+                likeCountSpan.textContent = likeCount;
+            })
+            .catch(error => {
+                console.error('Error toggling like:', error);
+            });
+    }
+</script>
 </body>
 </html>
