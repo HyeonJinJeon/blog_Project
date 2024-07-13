@@ -1,17 +1,35 @@
-//package com.example.blog_project.controller;
-//
-//import com.example.blog_project.service.TagService;
-//import lombok.RequiredArgsConstructor;
-//import org.springframework.web.bind.annotation.PostMapping;
-//import org.springframework.web.bind.annotation.RequestBody;
-//import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.bind.annotation.RestController;
-//
-//@RestController
-//@RequiredArgsConstructor
-//public class TagController {
-//    private final TagService tagService;
-//
-//    @PostMapping("/add/Tag")
-//    public String addTag(@RequestParam ){}
-//}
+package com.example.blog_project.controller;
+
+import com.example.blog_project.domain.Tag;
+import com.example.blog_project.domain.User;
+import com.example.blog_project.service.PostService;
+import com.example.blog_project.service.TagService;
+import com.example.blog_project.service.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+@RequiredArgsConstructor
+public class TagController {
+    private final TagService tagService;
+    private final PostService postService;
+    private final UserService userService;
+
+    @GetMapping("/posts/tag/{tagName}")
+    public String showPostByTag(@PathVariable String tagName, Model model, Authentication authentication){
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String myUsername = userDetails.getUsername();
+        User user = userService.findUserByUsername(myUsername);
+
+        Tag tag = tagService.findByTagName(tagName);
+        model.addAttribute("tag", tag);
+        model.addAttribute("postService", postService);
+        model.addAttribute("user", user);
+        return "blog/postsByTag";
+    }
+}
