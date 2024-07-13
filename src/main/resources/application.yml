@@ -6,14 +6,14 @@ spring:
     username: jeon
     password: 1234
     driver-class-name: com.mysql.cj.jdbc.Driver
-    jpa:
-      hibernate:
-        ddl-auto: update
-        show-sql: true
-    security:
-      user:
-        name: user
-        password: 1234
+  jpa:
+    hibernate:
+      ddl-auto: update
+#    show-sql: true
+  security:
+    user:
+      name: user
+      password: 1234
 server:
   port: 8082
   thymeleaf:
