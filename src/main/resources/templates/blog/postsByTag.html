@@ -1,30 +1,24 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org/">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title th:text="'시리즈: ' + ${series.title}">시리즈 상세</title>
-    <link rel="stylesheet" href="/css/series-detail.css">
+    <title th:text="'Posts tagged with ' + ${tag.name}">Posts by Tag</title>
+    <link rel="stylesheet" href="/css/postsByTag.css">
     <link rel="stylesheet" href="/css/header.css">
-    <script src="/js/header.js"></script>
 </head>
 <body>
-<div class="bodyContent">
-    <header th:replace="~{fragments/header :: headerFragment}"></header>
+<th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
 
-    <div class="series-header">
-        <h3>시리즈</h3>
-        <h1 th:text="${series.title}">test</h1>
-    </div>
-    <div class="series-actions">
-        <button class="action-btn">수정</button>
-        <button class="action-btn">삭제</button>
-        <button class="action-btn">오름차순</button>
-    </div>
+<header>
+    <h1 th:text="'Posts tagged with ' + ${tag.name}">Posts by Tag</h1>
+</header>
+
+<div class="content">
 
     <div class="posts-grid">
-        <div th:each="post, iter : ${posts}" class="post-card">
+        <div th:each="post, iter : ${tag.posts}" class="post-card">
             <span class="post-index" th:text="${iter.index + 1} + '.'">1.</span>
-            <a th:href="@{'/post?blogId=' + ${blog.id} + '&postId=' + ${post.id}}" class="post-link">
+            <a th:href="@{'/post?blogId=' + ${post.blog.id} + '&postId=' + ${post.id}}" class="post-link">
                 <div th:if="${postService.extractFirstImageUrl(post.content) != null}" class="image-container">
                     <img th:src="${postService.extractFirstImageUrl(post.content)}" alt="Post Image" class="post-image">
                 </div>
@@ -39,10 +33,6 @@
         </div>
     </div>
 </div>
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        console.log("페이지 로드 완료");
-    });
-</script>
+
 </body>
 </html>

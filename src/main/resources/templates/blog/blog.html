@@ -51,7 +51,7 @@
             <!--            <h2>Posts</h2>-->
             <div class="posts-grid">
                 <div th:each="post : ${posts}" class="post-card">
-                    <a th:href="@{'/post?username=' + ${user.username} + '&blogId=' + ${blog.id} + '&postId=' + ${post.id}}" class="post-link">
+                    <a th:href="@{'/post?blogId=' + ${blog.id} + '&postId=' + ${post.id}}" class="post-link">
                         <div class="post-content">
                             <h3 th:text="${post.title}">Post Title</h3>
                             <div th:if="${postService.extractFirstImageUrl(post.content) != null}" class="image-container">

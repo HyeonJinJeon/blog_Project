@@ -67,9 +67,13 @@ public class PostController {
 
     //게시글 상세보기를 위한 컨트롤러 작성
     @GetMapping("/post")
-    public String showPost(@RequestParam String username, @RequestParam Long blogId, @RequestParam Long postId, Model model) {
+    public String showPost(@RequestParam Long blogId, @RequestParam Long postId, Model model, Authentication authentication) {
+
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String myUsername = userDetails.getUsername();
+        User user = userService.findUserByUsername(myUsername);
+
         Post post = postService.getPostByBlogIdAndPostId(blogId, postId);
-        User user = userService.findUserByUsername(username);
         List<Comment> commentList = commentService.findCommentsByPostId(postId);
         Comment createComment = new Comment();
         Reply createReply = new Reply();
