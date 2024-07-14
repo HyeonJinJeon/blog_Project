@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-import static org.springframework.data.jpa.domain.AbstractPersistable_.id;
-
 @Controller
 @RequiredArgsConstructor
 public class SeriesController {

@@ -1,8 +1,5 @@
 package com.example.blog_project.controller;
 
-import com.example.blog_project.domain.Like;
-import com.example.blog_project.domain.Post;
-import com.example.blog_project.domain.User;
 import com.example.blog_project.service.LikeService;
 import com.example.blog_project.service.PostService;
 import com.example.blog_project.service.UserService;
@@ -10,12 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
