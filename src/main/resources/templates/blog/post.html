@@ -15,7 +15,7 @@
 
 <header>
     <h1 th:text="${post.title}">Post Title</h1>
-    <p class="post-meta">Published on <span th:text="${post.createdAt}">Date</span> by <span th:text="${user.username}">Author</span></p>
+    <p class="post-meta">Published on <span th:text="${post.createdAt}">Date</span> by <span th:text="${post.blog.user.username}">Author</span></p>
 </header>
 <div class="content">
     <div class="post-content" th:utext="${post.content}">
