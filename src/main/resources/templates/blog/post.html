@@ -18,10 +18,6 @@
     <p class="post-meta">Published on <span th:text="${post.createdAt}">Date</span> by <span th:text="${post.blog.user.username}">Author</span></p>
 </header>
 <div class="content">
-    <div class="post-content" th:utext="${post.content}">
-        <!-- 포스트 내용이 여기에 표시됩니다. -->
-    </div>
-
     <div class="tags-section">
         <h2>Tags</h2>
         <ul>
@@ -29,6 +25,10 @@
                 <a th:href="@{'/posts/tag/' + ${tag.name}}" th:text="${tag.name}">Tag Name</a>
             </li>
         </ul>
+    </div>
+
+    <div class="post-content" th:utext="${post.content}">
+        <!-- 포스트 내용이 여기에 표시됩니다. -->
     </div>
 
     <div class="like-section" onclick="toggleLike()">
