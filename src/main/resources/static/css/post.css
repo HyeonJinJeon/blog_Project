@@ -25,6 +25,22 @@ header p {
     color: #a5a5a5;
 }
 
+/* 수정 버튼 스타일 */
+.modify-button {
+    background-color: #444;
+    color: #eaeaea;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-size: 1em;
+}
+
+.modify-button:hover {
+    background-color: #555;
+}
+
 /* 컨텐츠 스타일 */
 .content {
     max-width: 800px;
@@ -122,4 +138,28 @@ header p {
 
 .add-reply button:hover, .comments-section button:hover {
     background-color: #555;
+}
+
+/* 좋아요 섹션 스타일 */
+.like-section {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+
+.like-section .bi-heart,
+.like-section .bi-heart-fill {
+    margin-right: 10px;
+    transition: color 0.2s;
+}
+
+.like-section .bi-heart:hover,
+.like-section .bi-heart-fill:hover {
+    color: #ff4d4d;
+}
+
+.like-count {
+    font-size: 1.2em;
 }

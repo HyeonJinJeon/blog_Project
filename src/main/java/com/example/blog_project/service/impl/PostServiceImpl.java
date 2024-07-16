@@ -62,4 +62,5 @@ public class PostServiceImpl implements PostService {
     public Post getPostById(Long postId) {
         return postRepository.findById(postId).orElse(null);
     }
+
 }

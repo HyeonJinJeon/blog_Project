@@ -60,8 +60,45 @@ public class PostController {
 
         return "redirect:/blog?username=" + myUsername;
     }
+    //post 수정
+    @GetMapping("/post/modify")
+    public String showModifyPostPage(@RequestParam("postId") Long postId,
+                                     Authentication authentication,
+                                     Model model) {
+        System.out.println("들어오나"+ postId);
+        Post post = postService.getPostById(postId);
+        List<Series> seriesList = seriesService.getSeriesByBlogId(post.getBlog().getId());
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String myUsername = userDetails.getUsername();
+        String tagString = tagService.makeTagsString(post.getTagSet());
+        if (post != null && post.getBlog().getUser().getUsername().equals(myUsername)) {
+            model.addAttribute("post", post);
+            model.addAttribute("seriesList", seriesList);
+            model.addAttribute("tags", tagString);
+            return "/blog/modifyPost";
+        } else {
+            return "redirect:/";
+        }
+    }
+    @PostMapping("/post/modify")
+    public String modifyPost(@ModelAttribute Post post, @RequestParam("tags") String tags, HttpServletRequest request, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String myUsername = userDetails.getUsername();
 
+        User user = userService.findUserByUsername(myUsername);
+        Blog blog = blogService.getBlogByUserId(user.getId());
+        post.setBlog(blog);
 
+        System.out.println(tags);
+        // 태그 파싱 및 설정
+        Set<Tag> tagSet = tagService.parseTags(tags);
+        post.setTagSet(tagSet);
+
+        // 포스트 저장
+        postService.savePost(post);
+
+        return "redirect:/blog?username=" + myUsername;
+    }
     //게시글 상세보기를 위한 컨트롤러 작성
     @GetMapping("/post")
     public String showPost(@RequestParam Long blogId, @RequestParam Long postId, Model model, Authentication authentication) {
