@@ -4,16 +4,17 @@ import com.example.blog_project.domain.*;
 import com.example.blog_project.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Controller
@@ -99,6 +100,30 @@ public class PostController {
 
         return "redirect:/blog?username=" + myUsername;
     }
+    //게시글 삭제
+    @DeleteMapping("/post/delete/{postId}")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long postId, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String myUsername = userDetails.getUsername();
+        Post post = postService.getPostById(postId);
+        Map<String, String> response = new HashMap<>();
+
+        if (post == null) {
+            response.put("redirectUrl", "/blog?username=" + myUsername);
+            return ResponseEntity.ok(response);
+        }
+
+        if (post.getBlog().getUser().getUsername().equals(authentication.getName())) {
+            postService.deletePost(postId);
+            response.put("redirectUrl", "/blog?username=" + myUsername);
+            return ResponseEntity.ok(response);
+        } else {
+            response.put("redirectUrl", "/");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        }
+    }
+
     //게시글 상세보기를 위한 컨트롤러 작성
     @GetMapping("/post")
     public String showPost(@RequestParam Long blogId, @RequestParam Long postId, Model model, Authentication authentication) {

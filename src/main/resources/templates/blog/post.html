@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title th:text="${post.title}">Post Title</title>
@@ -17,12 +17,13 @@
     <h1 th:text="${post.title}">Post Title</h1>
     <p class="post-meta">Published on <span th:text="${post.createdAt}">Date</span> by <span th:text="${post.blog.user.username}">Author</span></p>
 
-    <!-- 수정 버튼 추가 -->
+    <!-- 수정 및 삭제 버튼 추가 -->
     <div th:if="${#authentication.name == post.blog.user.username}">
-        <form th:action="@{/post/modify}" method="get">
+        <form th:action="@{/post/modify}" method="get" style="display: inline;">
             <input type="hidden" name="postId" th:value="${post.id}">
             <button type="submit" class="modify-button">수정하기</button>
         </form>
+        <button type="button" class="delete-button" onclick="deletePost()">삭제하기</button>
     </div>
 </header>
 <div class="content">
@@ -137,6 +138,34 @@
                 console.error('Error toggling like:', error);
             });
     }
+
+    function deletePost() {
+        let confirmDelete = confirm('정말로 삭제하시겠습니까?');
+        if (confirmDelete) {
+            let postId = [[${post.id}]];
+            fetch(`/post/delete/${postId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    alert('삭제되었습니다.');
+                    window.location.href = data.redirectUrl;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('삭제 중 오류가 발생했습니다.');
+                });
+        }
+    }
+
 </script>
 </body>
 </html>

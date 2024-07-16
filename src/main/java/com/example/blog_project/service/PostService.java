@@ -18,4 +18,6 @@ public interface PostService {
     List<Post> getPostBySeriesId(Long seriesId);
 
     Post getPostById(Long postId);
+
+    void deletePost(Long postId);
 }
