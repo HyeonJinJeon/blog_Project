@@ -41,4 +41,21 @@ public class TagServiceImpl implements TagService {
 
         return tagSet;
     }
+
+    @Override
+    public String makeTagsString(Set<Tag> tagSet) {
+        if(tagSet == null || tagSet.size() == 0){
+            return "";
+        }else {
+            StringBuilder sb = new StringBuilder();
+            for (Tag tag : tagSet) {
+                if (sb.length() > 0) {
+                    sb.append(',');
+                    sb.append(' ');
+                }
+                sb.append(tag.getName());
+            }
+            return sb.toString();
+        }
+    }
 }

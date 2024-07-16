@@ -10,4 +10,6 @@ public interface TagService {
     void addTag(Tag tag);
 
     Set<Tag> parseTags(String tags);
+
+    String makeTagsString(Set<Tag> tagSet);
 }
