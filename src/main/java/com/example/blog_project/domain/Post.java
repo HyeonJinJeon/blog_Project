@@ -36,6 +36,9 @@ public class Post {
 
     private String content;
 
+    @JoinColumn(name = "cover_image")
+    private String coverImage;
+
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
 
