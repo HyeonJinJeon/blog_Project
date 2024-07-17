@@ -30,6 +30,20 @@ public class PostController {
     private final TagService tagService;
     private final DraftService draftService;
 
+    //메인 페이지
+    @GetMapping("/main")
+    public String getAllPosts(Model model, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        User user = userService.findUserByUsername(username);
+        List<Post> posts = postService.findAll();
+        List<Post> removeTagPosts = postService.extractPlainTextFromPosts(posts);
+        model.addAttribute("posts", removeTagPosts);
+        model.addAttribute("user", user);
+        model.addAttribute("postService", postService);
+        return "main";
+    }
+
     //post 작성
     @GetMapping("/post/new")
     public String showPostForm(Model model, Authentication authentication) {

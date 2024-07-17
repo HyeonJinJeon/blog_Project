@@ -1,12 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>메인 페이지</title>
-    <script src="/js/main.js"></script>
+    <link rel="stylesheet" href="/css/main.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <script src="/js/header.js"></script>
+    <link rel="stylesheet" href="/css/blog.css">
 </head>
 <body>
-<!--<button onclick="redirectToMyBlog()">내 블로그</button>-->
-<a th:href="@{/blog(username=${user.getUsername()})}">내 블로그로 이동</a>
+<th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
+<div class="content-wrapper">
+    <section class="filter-section">
+        <button class="filter-button" onclick="filterPosts('latest')">최신순</button>
+        <button class="filter-button" onclick="filterPosts('popular')">인기순</button>
+    </section>
+    <div class="series-grid">
+        <div th:each="post : ${posts}" class="series-card">
+            <a th:href="@{'/post/' + ${post.id}}" class="series-link">
+                <div class="series-content">
+                    <div class="image-container">
+                        <img th:src="${post.coverImage ?: '/images/default-image.png'}" alt="Post Image" class="series-image">
+                    </div>
+                    <h3 th:text="${post.title}">Post Title</h3>
+                    <p class="post-content" th:text="${post.content}">Post Content</p>
+                    <p th:text="${post.createdAt}">Date</p>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+<script>
+    function filterPosts(criteria) {
+        // TODO: Implement filtering logic here
+        alert(criteria + '로 필터링');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const contentElements = document.querySelectorAll('.post-content');
+        const maxLength = 100; // 최대 글자 수 설정
+
+        contentElements.forEach(el => {
+            if (el.innerText.length > maxLength) {
+                el.innerText = el.innerText.substring(0, maxLength) + '...';
+            }
+        });
+    });
+</script>
 </body>
 </html>

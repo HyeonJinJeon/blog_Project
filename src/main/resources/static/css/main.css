@@ -1,0 +1,99 @@
+/* 전체 컨텐츠 래퍼 */
+.content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* 시리즈 그리드 스타일 */
+.series-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr); /* 한 줄에 다섯 개의 시리즈 카드 */
+    gap: 20px;
+}
+
+/* 시리즈 카드 스타일 */
+.series-card {
+    background-color: #2a2a2a;
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+    height: 350px; /* 카드의 고정 높이 */
+}
+
+.series-card:hover {
+    transform: translateY(-5px);
+}
+
+/* 시리즈 링크 스타일 */
+.series-link {
+    display: block;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* 시리즈 콘텐츠 스타일 */
+.series-content {
+    padding: 15px;
+}
+
+.series-content h3 {
+    margin: 0 0 10px;
+    font-size: 1.2em;
+    color: #eaeaea;
+}
+
+.series-content .image-container {
+    width: 100%;
+    height: 120px; /* 시리즈 이미지 높이 조정 */
+    overflow: hidden; /* 넘는 부분을 숨기기 */
+    margin-bottom: 10px;
+}
+
+.series-content .series-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* 이미지 비율을 유지하면서 넘는 부분을 잘라냄 */
+}
+
+/* 게시글 내용 스타일 */
+.post-content {
+    font-size: 0.9em;
+    color: #d4d4d4;
+    height: 70px; /* 고정 높이 설정 */
+    overflow: hidden; /* 넘치는 텍스트 숨기기 */
+}
+
+/* 기본 이미지 스타일 */
+.series-card .series-image[alt="Default Image"] {
+    height: 120px; /* 기본 이미지 높이 조정 */
+    object-fit: contain;
+    background-color: #1b1b1b;
+}
+
+/* 링크 클릭 시 스타일 변화를 없애는 추가 CSS */
+.series-card a, .series-card a:visited, .series-card a:hover, .series-card a:active {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* 필터 섹션 스타일 */
+.filter-section {
+    display: flex;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+/* 필터 버튼 스타일 */
+.filter-button {
+    background-color: #333;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.filter-button:hover {
+    background-color: #555;
+}

@@ -97,18 +97,10 @@ public class UserController {
             if (isAdmin) { //만약 관리자의 Role이 있다면
                 return "redirect:/admin";
             } else {
-                return "redirect:/blog?username=" + user.getUsername();
+                return "main";
             }
         } else {
             return "redirect:/signIn";
         }
-    }
-
-    @GetMapping("/main")
-    public String main(Model model, HttpServletRequest request) {
-        String username = CookieUtil.getValue(request, "user");
-        User user = userService.findUserByUsername(username);
-        model.addAttribute("user", user);
-        return "/main";
     }
 }

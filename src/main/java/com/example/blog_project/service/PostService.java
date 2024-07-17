@@ -13,6 +13,8 @@ public interface PostService {
     //이미지 태그를 제외한 나머지 태그 모두 제거하는 로직
 //    String sanitizePostContent(String content);
 
+    List<Post> extractPlainTextFromPosts(List<Post> postList);
+
     // post.content에 저장되어있는 이미지 중에서 첫 번째 이미지 scr 추출하는 로직
     String extractFirstImageUrl(String content);
 
@@ -23,4 +25,6 @@ public interface PostService {
     Post getPostById(Long postId);
 
     void deletePost(Long postId);
+
+    List<Post> findAll();
 }

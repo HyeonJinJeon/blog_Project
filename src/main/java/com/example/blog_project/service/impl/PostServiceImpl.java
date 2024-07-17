@@ -47,6 +47,26 @@ public class PostServiceImpl implements PostService {
 //        return sanitizedContent;
 //    }
 
+    //이미지 태그 내용 제거 및 나머지 태그 제거
+    public List<Post> extractPlainTextFromPosts(List<Post> posts) {
+        for (Post post : posts) {
+            String content = post.getContent();
+            // Jsoup을 사용하여 HTML을 파싱합니다.
+            Document doc = Jsoup.parse(content);
+
+            // 이미지 태그를 모두 제거합니다.
+            Elements elements = doc.select("img");
+            post.setCoverImage(elements.attr("src"));
+            elements.remove();
+
+            // 태그를 제거하고 순수한 텍스트만을 추출하여 리스트에 추가합니다.
+            String plainText = doc.text();
+            post.setContent(plainText);
+        }
+
+        return posts;
+    }
+
     // post.content에 저장되어있는 이미지 중에서 첫 번째 이미지 scr 추출하는 로직
     public String extractFirstImageUrl(String content) {
         Document doc = Jsoup.parse(content);
@@ -80,6 +100,11 @@ public class PostServiceImpl implements PostService {
     @Override
     public void deletePost(Long postId) {
         postRepository.deleteById(postId);
+    }
+
+    @Override
+    public List<Post> findAll() {
+        return postRepository.findAll();
     }
 
 }
