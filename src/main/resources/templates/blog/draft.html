@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title th:text="${draft.title}">Draft Title</title>
+  <link rel="stylesheet" href="/css/post.css">
+  <script src="/js/reply.js"></script>
+  <script src="/js/header.js"></script>
+  <script src="/js/like.js"></script>
+  <link rel="stylesheet" href="/css/header.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
+</head>
+<body>
+<th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
+
+<header>
+  <h1 th:text="${draft.title}">Draft Title</h1>
+  <p class="post-meta">Published on <span th:text="${draft.createdAt}">Date</span> by <span th:text="${draft.blog.user.username}">Author</span></p>
+
+  <!-- 수정 및 삭제 버튼 추가 -->
+  <div th:if="${#authentication.name == draft.blog.user.username}">
+    <form th:action="@{/draft/modify}" method="get" style="display: inline;">
+      <input type="hidden" name="draftId" th:value="${draft.id}">
+      <button type="submit" class="modify-button">수정하기</button>
+    </form>
+    <button type="button" class="delete-button" onclick="deleteDraft()">삭제하기</button>
+  </div>
+</header>
+<div class="content">
+  <div class="tags-section">
+    <h2>Tags</h2>
+    <ul>
+      <li th:each="tag : ${draft.tagSet}">
+        <a th:href="@{'/drafts/tag/' + ${tag.name}}" th:text="${tag.name}">Tag Name</a>
+      </li>
+    </ul>
+  </div>
+
+  <div class="draft-content" th:utext="${draft.content}">
+    <!-- 임시글 내용이 여기에 표시됩니다. -->
+  </div>
+</div>
+
+<script>
+  function deleteDraft() {
+    let confirmDelete = confirm('정말로 삭제하시겠습니까?');
+    if (confirmDelete) {
+      let draftId = [[${draft.id}]];
+      fetch(`/draft/delete/${draftId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+              .then(response => {
+                if (!response.ok) {
+                  throw new Error('Network response was not ok');
+                }
+                return response.json();
+              })
+              .then(data => {
+                alert('삭제되었습니다.');
+                window.location.href = data.redirectUrl;
+              })
+              .catch(error => {
+                console.error('Error:', error);
+                alert('삭제 중 오류가 발생했습니다.');
+              });
+    }
+  }
+</script>
+</body>
+</html>

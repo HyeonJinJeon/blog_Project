@@ -1,42 +1,43 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>새 글 작성</title>
+    <title>임시글 수정</title>
     <link rel="stylesheet" href="/css/postForm.css">
     <script src="https://cdn.ckeditor.com/ckeditor5/29.1.0/classic/ckeditor.js"></script>
 </head>
 <body>
 <header>
-    <h1>새 글 작성</h1>
+    <h1>임시글 수정</h1>
 </header>
 <section>
-    <form id="postForm" action="/posts" method="post">
+    <form id="draftForm" th:action="@{/draft/modify(draftId=${draft.id})}" method="post">
         <div class="form-group">
             <label for="title">제목:</label>
-            <input type="text" id="title" name="title" required>
+            <input type="text" id="title" name="title" th:value="${draft.title}" required>
         </div>
         <div class="form-group">
             <label for="content">내용:</label>
-            <textarea id="content" name="content" style="display: none;"></textarea>
+            <textarea id="content" name="content" style="display: none;" th:text="${draft.content}"></textarea>
         </div>
         <div class="form-group">
             <label for="tags">태그 (쉼표로 구분):</label>
-            <input type="text" id="tags" name="tags">
+            <input type="text" id="tags" name="tags" th:value="${tags}"> <!-- tags 필드 추가, 필요 시 가공 -->
         </div>
         <div class="form-group">
             <label for="seriesId">시리즈 (선택 사항):</label>
             <select id="seriesId" name="seriesId">
                 <option value="">시리즈를 선택하세요</option>
-                <!-- 타임리프를 이용하여 seriesList를 옵션으로 추가 -->
                 <th:block th:each="series : ${seriesList}">
-                    <option th:value="${series.id}" th:text="${series.title}"></option>
+                    <option th:value="${series.id}" th:text="${series.title}" th:selected="${draft != null and draft.series != null and series.id == (draft.series.id ?: -1)}"></option>
+                    <!-- Elvis 연산자 ?: 를 사용하여 draft.series.id가 null인 경우 기본값으로 -1을 설정 -->
                 </th:block>
             </select>
-            <input type="hidden" id="series" name="seriesId" th:field="*{post.series}">
+            <input type="hidden" id="series" name="seriesId" th:field="*{draft.series}">
+            <input type="hidden" id="draftId" name="draftId" th:field="*{draft.id}">
         </div>
-        <button type="submit" name="action" value="publish">글 작성</button>
-        <button type="submit" name="action" value="saveDraft">임시글 작성</button>
+        <button type="submit" name="action" value="modify">수정 완료</button>
+        <button type="submit" name="action" value="publish">출간하기</button>
     </form>
 </section>
 <script>
@@ -48,7 +49,7 @@
         })
         .then(editor => {
             // 폼 제출 이벤트 핸들러 추가
-            document.querySelector('#postForm').addEventListener('submit', (event) => {
+            document.querySelector('#draftForm').addEventListener('submit', (event) => {
                 // CKEditor 데이터 textarea에 복사
                 const content = editor.getData();
                 document.querySelector('#content').value = content;

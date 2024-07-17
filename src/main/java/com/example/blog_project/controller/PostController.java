@@ -28,6 +28,7 @@ public class PostController {
     private final ReplyService replyService;
     private final LikeService likeService;
     private final TagService tagService;
+    private final DraftService draftService;
 
     //post 작성
     @GetMapping("/post/new")
@@ -43,7 +44,7 @@ public class PostController {
         return "blog/postForm";
     }
     @PostMapping("/posts")
-    public String createPost(@ModelAttribute Post post, @RequestParam("tags") String tags, HttpServletRequest request, Authentication authentication) {
+    public String createPost(@ModelAttribute Post post, @RequestParam("tags") String tags, @RequestParam("action") String action, HttpServletRequest request, Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String myUsername = userDetails.getUsername();
 
@@ -55,10 +56,13 @@ public class PostController {
         // 태그 파싱 및 설정
         Set<Tag> tagSet = tagService.parseTags(tags);
         post.setTagSet(tagSet);
-
-        // 포스트 저장
-        postService.savePost(post);
-
+        if ("publish".equals(action)) {
+            // 포스트 저장
+            postService.savePost(post);
+        }else if ("saveDraft".equals(action)) {
+            // 임시글 저장
+            draftService.saveDraftByPost(post);
+        }
         return "redirect:/blog?username=" + myUsername;
     }
     //post 수정
@@ -131,6 +135,7 @@ public class PostController {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         String myUsername = userDetails.getUsername();
         User user = userService.findUserByUsername(myUsername);
+        Blog blog = blogService.getBlogByUserId(user.getId());
 
         Post post = postService.getPostByBlogIdAndPostId(blogId, postId);
         List<Comment> commentList = commentService.findCommentsByPostId(postId);
@@ -149,6 +154,7 @@ public class PostController {
         model.addAttribute("createReply", createReply);
         model.addAttribute("likeCount", likeCount);
         model.addAttribute("isLiked", isLiked);
+        model.addAttribute("blog", blog);
 
         return "blog/post";
     }

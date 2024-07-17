@@ -1,5 +1,6 @@
 package com.example.blog_project.service.impl;
 
+import com.example.blog_project.domain.Draft;
 import com.example.blog_project.domain.Post;
 import com.example.blog_project.repository.PostRepository;
 import com.example.blog_project.service.PostService;
@@ -22,16 +23,29 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
     }
 
-    //이미지 태그를 제외한 나머지 태그 모두 제거하는 로직
-    public String sanitizePostContent(String content) {
-        Document document = Jsoup.parse(content);
-
-        // HTML 태그 제거하면서 이미지 태그 유지
-        Whitelist whitelist = Whitelist.none().addTags("img").addAttributes("img", "src");
-        String sanitizedContent = Jsoup.clean(document.html(), whitelist);
-
-        return sanitizedContent;
+    @Override
+    public void savePostByDraft(Draft draft) {
+        Post post = new Post();
+        post.setBlog(draft.getBlog());
+        post.setTitle(draft.getTitle());
+        post.setContent(draft.getContent());
+        post.setCreatedAt(draft.getCreatedAt());
+        post.setUpdatedAt(draft.getUpdatedAt());
+        post.setSeries(draft.getSeries());
+        post.setTagSet(draft.getTagSet());
+        postRepository.save(post);
     }
+
+    //이미지 태그를 제외한 나머지 태그 모두 제거하는 로직
+//    public String sanitizePostContent(String content) {
+//        Document document = Jsoup.parse(content);
+//
+//        // HTML 태그 제거하면서 이미지 태그 유지
+//        Whitelist whitelist = Whitelist.none().addTags("img").addAttributes("img", "src");
+//        String sanitizedContent = Jsoup.clean(document.html(), whitelist);
+//
+//        return sanitizedContent;
+//    }
 
     // post.content에 저장되어있는 이미지 중에서 첫 번째 이미지 scr 추출하는 로직
     public String extractFirstImageUrl(String content) {

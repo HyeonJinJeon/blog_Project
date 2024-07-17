@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org/">
+<head>
+  <meta charset="UTF-8">
+  <title>임시글 목록</title>
+  <link rel="stylesheet" href="/css/series-detail.css">
+  <link rel="stylesheet" href="/css/header.css">
+  <script src="/js/header.js"></script>
+</head>
+<body>
+<div class="bodyContent">
+  <header th:replace="~{fragments/header :: headerFragment}"></header>
+
+  <div class="drafts-header">
+    <h3>임시글 목록</h3>
+  </div>
+  <div class="drafts-actions">
+<!--    <button class="action-btn">오름차순</button>-->
+  </div>
+
+  <div class="posts-grid">
+    <div th:each="draft, iter : ${drafts}" class="post-card">
+      <span class="post-index" th:text="${iter.index + 1} + '.'">1.</span>
+      <a th:href="@{'/draft?blogId=' + ${blog.id} + '&draftId=' + ${draft.id}}" class="post-link">
+        <div th:if="${postService.extractFirstImageUrl(draft.content) != null}" class="image-container">
+          <img th:src="${postService.extractFirstImageUrl(draft.content)}" alt="Draft Image" class="post-image">
+        </div>
+        <div th:unless="${postService.extractFirstImageUrl(draft.content) != null}" class="image-container">
+          <img th:src="@{/images/default-image.png}" alt="Default Image" class="post-image">
+        </div>
+        <div class="post-content">
+          <h3 th:text="${draft.title}">Draft Title</h3>
+          <p class="post-meta" th:text="${draft.createdAt}">Date</p>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    console.log("페이지 로드 완료");
+  });
+</script>
+</body>
+</html>

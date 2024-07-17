@@ -25,7 +25,7 @@
                     </a>
                     <div class="header-dropdown" id="dropdownMenu">
                         <a th:href="@{'/blog?username=' + ${user.username}}">내 블로그</a>
-                        <a th:href="@{/posting}">임시 글</a>
+                        <a th:href="@{'/blog/draft?username=' + ${user.username}}">임시 글</a>
                         <a th:href="@{/read}">읽기 목록</a>
                         <a th:href="@{/setting}">설정</a>
                         <a th:href="@{/api/logout}">로그아웃</a>

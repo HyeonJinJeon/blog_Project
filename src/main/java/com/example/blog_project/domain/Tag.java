@@ -23,4 +23,7 @@ public class Tag {
 
     @ManyToMany(mappedBy = "tagSet")
     private Set<Post> posts = new HashSet<>();
+
+    @ManyToMany(mappedBy = "tagSet")
+    private Set<Draft> drafts = new HashSet<>();
 }
