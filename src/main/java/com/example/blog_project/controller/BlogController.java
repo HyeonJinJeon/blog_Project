@@ -45,7 +45,7 @@ public class BlogController {
         if (blog != null && blog.getPosts() != null) {
             List<Post> posts = blog.getPosts();
             for (Post post : posts) {
-                post.setContent(postService.sanitizePostContent(post.getContent())); // 내용의 태그 제거
+//                post.setContent(postService.sanitizePostContent(post.getContent())); // 내용의 태그 제거
             }
             model.addAttribute("posts", posts);
         }
