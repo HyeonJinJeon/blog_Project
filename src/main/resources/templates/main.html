@@ -17,7 +17,7 @@
     </section>
     <div class="series-grid">
         <div th:each="post : ${posts}" class="series-card">
-            <a th:href="@{'/post/' + ${post.id}}" class="series-link">
+            <a th:href="@{'/post?blogId=' + ${post.blog.id} + '&postId=' + ${post.id}}" class="post-link">
                 <div class="series-content">
                     <div class="image-container">
                         <img th:src="${post.coverImage ?: '/images/default-image.png'}" alt="Post Image" class="series-image">
