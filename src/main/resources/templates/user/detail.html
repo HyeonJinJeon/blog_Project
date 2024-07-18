@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 정보</title>
+    <link rel="stylesheet" href="/css/modify.css">
+</head>
+<body>
+<div class="signup-container">
+    <h2>회원 정보</h2>
+    <div class="input-group">
+        <label for="name">이름</label>
+        <div id="name" th:text="${user.name}">홍길동</div>
+    </div>
+    <div class="input-group">
+        <label for="username">사용자명</label>
+        <div id="username" th:text="${user.username}">user123</div>
+    </div>
+    <div class="input-group">
+        <label for="email">이메일</label>
+        <div id="email" th:text="${user.email}">user@example.com</div>
+    </div>
+    <button type="button" onclick="location.href='/modify'">수정하러 가기</button>
+</div>
+</body>
+</html>

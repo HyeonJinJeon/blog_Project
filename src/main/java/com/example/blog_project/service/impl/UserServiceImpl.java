@@ -36,6 +36,25 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(user);
     }
 
+    @Override
+    public User updateUser(User user) {
+        // 기존 사용자 정보 조회
+        User existingUser = userRepository.findById(user.getId()).orElse(null);
+        System.out.println(existingUser.getUsername());
+        if (existingUser != null) {
+            System.out.println("사용자 있냐");
+            // 수정할 필드 업데이트
+            existingUser.setName(user.getName());
+            existingUser.setEmail(user.getEmail());
+            existingUser.setProfileImageUrl(user.getProfileImageUrl());
+
+            // 저장
+            return userRepository.save(existingUser);
+        }
+
+        return null; // 사용자가 존재하지 않을 경우 예외 처리 필요
+    }
+
     public Optional<User> getUser(Long id){
         return userRepository.findById(id);
     }

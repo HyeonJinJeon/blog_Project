@@ -4,12 +4,15 @@ import com.example.blog_project.CookieUtil;
 import com.example.blog_project.domain.Role;
 import com.example.blog_project.domain.User;
 import com.example.blog_project.service.BlogService;
+import com.example.blog_project.service.GetUserService;
 import com.example.blog_project.service.RoleService;
 import com.example.blog_project.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -57,7 +60,7 @@ public class UserController {
             } catch (IOException e) {
                 e.printStackTrace();
                 redirectAttributes.addFlashAttribute("message", "이미지 업로드 실패!");
-                return "redirect:/register";
+                return "redirect:/signUp";
             }
         }
         Role role = roleService.getRole(1L);
@@ -103,4 +106,57 @@ public class UserController {
             return "redirect:/signIn";
         }
     }
+    // 회원 정보 페이지
+    @GetMapping("/detail")
+    public String detailUser(Model model, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        User user = userService.findUserByUsername(username);
+        model.addAttribute("user", user);
+        return "user/detail";
+    }
+    @GetMapping("/modify")
+    public String modifyUser(Model model, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        User user = userService.findUserByUsername(username);
+        model.addAttribute("user", user);
+        return "user/modify";
+    }
+
+    @PostMapping("/modify")
+    public String modifyUser(@ModelAttribute User user, @RequestParam("profileImage") MultipartFile profileImage, RedirectAttributes redirectAttributes, Authentication authentication) {
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        User currentUser = userService.findUserByUsername(username);
+        user.setId(currentUser.getId());
+
+        System.out.println("회원정보 수정 들어오나");
+        System.out.println(user.getId());
+        System.out.println(user.getUsername());
+
+        String profileImagePath = null;
+        if (!profileImage.isEmpty()) {
+            try {
+                File uploadDir = new File(UPLOAD_DIR);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
+
+                profileImagePath = UPLOAD_DIR + profileImage.getOriginalFilename();
+                profileImage.transferTo(new File(profileImagePath));
+                user.setProfileImageUrl(profileImagePath);
+            } catch (IOException e) {
+                e.printStackTrace();
+                redirectAttributes.addFlashAttribute("message", "이미지 업로드 실패!");
+                return "redirect:/modify";
+            }
+        }
+
+        userService.updateUser(user);
+        redirectAttributes.addFlashAttribute("message", "회원 정보가 성공적으로 수정되었습니다!");
+        return "redirect:/main"; // 메인 페이지 경로로 리디렉션
+    }
+
+
 }

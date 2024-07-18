@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>회원 정보 수정</title>
+    <link rel="stylesheet" href="/css/modify.css">
+    <style>
+        .profile-image-preview {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="signup-container">
+    <h2>회원 정보 수정</h2>
+    <form th:action="@{/modify}" method="post" enctype="multipart/form-data" th:object="${user}" onsubmit="return checkProfileImage()">
+        <div class="input-group">
+            <label for="profileImage">프로필 이미지:</label>
+            <img id="profileImagePreview" class="profile-image-preview"
+                 th:src="${user.profileImageUrl != null} ? ${user.profileImageUrl} : '/img/default-profile.jpg'"
+                 alt="Profile Image Preview">
+            <input type="file" id="profileImage" name="profileImage" accept="image/*" onchange="previewImage(event)">
+            <input type="hidden" id="profileImageUrl" name="profileImageUrl" th:value="${user.profileImageUrl}">
+        </div>
+        <div class="input-group">
+            <label for="name">이름:</label>
+            <input type="text" id="name" name="name" th:value="${user.name}" required>
+        </div>
+        <div class="input-group">
+            <label for="username">사용자명:</label>
+            <input type="text" id="username" name="username" th:value="${user.username}" required readonly>
+        </div>
+        <div class="input-group">
+            <label for="email">이메일:</label>
+            <input type="email" id="email" name="email" th:value="${user.email}" required>
+        </div>
+        <input type="hidden" id="userId" name="userId" th:value="${user.id}">
+        <input type="hidden" id="password" name="password" th:value="${user.password}">
+        <button type="submit">수정 완료</button>
+    </form>
+</div>
+
+<script>
+    // 프로필 이미지 미리보기 함수
+    function previewImage(event) {
+        const reader = new FileReader();
+        reader.onload = function(){
+            const output = document.getElementById('profileImagePreview');
+            output.src = reader.result;
+        };
+        // 선택한 파일 읽기
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // 폼 제출 시 프로필 이미지 처리 함수
+    function checkProfileImage() {
+        const profileImage = document.getElementById('profileImage');
+        const profileImageUrl = document.getElementById('profileImageUrl').value;
+
+        // 사용자가 새로운 파일을 선택하지 않은 경우
+        if (profileImage.files.length === 0) {
+            // 기존 이미지 URL을 hidden input으로 제출
+            const existingImageInput = document.createElement('input');
+            existingImageInput.type = 'hidden';
+            existingImageInput.name = 'existingProfileImageUrl';
+            existingImageInput.value = profileImageUrl;
+            document.querySelector('form').appendChild(existingImageInput);
+        }
+
+        return true;
+    }
+
+</script>
+</body>
+</html>
