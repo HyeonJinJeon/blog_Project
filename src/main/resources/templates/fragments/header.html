@@ -16,23 +16,22 @@
                 <li><a class="nav-link" href="/notifications"><i class="bi bi-bell"></i></a></li>
             </ul>
             <div class="user-actions">
-                <div class="create-post" th:if="${user != null}">
+                <div class="create-post" th:if="${user != null && user.username != '0'}">
                     <a th:href="@{/post/new}">새 글 작성</a>
                 </div>
-                <div class="user-section" th:if="${user != null}">
+                <div class="user-section" th:if="${user != null && user.username != '0'}">
                     <a href="#" class="profile-link">
                         <img th:src="${user.profileImageUrl}" alt="Profile Image" class="profile-img" id="profileImage" onclick="toggleDropdown()">
                     </a>
                     <div class="header-dropdown" id="dropdownMenu">
                         <a th:href="@{'/blog?username=' + ${user.username}}">내 블로그</a>
                         <a th:href="@{'/blog/draft?username=' + ${user.username}}">임시 글</a>
-                        <a th:href="@{/read}">읽기 목록</a>
-                        <a th:href="@{/setting}">설정</a>
+                        <a th:href="@{/detail}">회원 정보</a>
                         <a th:href="@{/api/logout}">로그아웃</a>
                     </div>
                 </div>
-                <div class="login-section" th:if="${user == null}">
-                    <form th:action="@{/user/loginform}">
+                <div class="login-section" th:if="${user == null || user.username == '0'}">
+                    <form th:action="@{/signIn}">
                         <button class="login-btn" type="submit">로그인</button>
                     </form>
                 </div>
