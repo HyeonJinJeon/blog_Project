@@ -10,14 +10,15 @@
 </head>
 <body>
 <th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
+<div id="alertMessage" th:if="${message}" th:text="${message}"></div>
 <div class="content-wrapper">
     <section class="filter-section">
         <button class="filter-button" onclick="filterPosts('latest')">최신순</button>
         <button class="filter-button" onclick="filterPosts('popular')">인기순</button>
     </section>
-    <div class="series-grid">
+    <div class="series-grid" id="seriesGrid">
         <div th:each="post : ${posts}" class="series-card">
-            <a th:href="@{'/post?blogId=' + ${post.blog.id} + '&postId=' + ${post.id}}" class="post-link">
+            <a th:href="@{'/post?blogId=' + ${post.blogId} + '&postId=' + ${post.id}}" class="post-link">
                 <div class="series-content">
                     <div class="image-container">
                         <img th:src="${post.coverImage ?: '/images/default-image.png'}" alt="Post Image" class="series-image">
@@ -32,9 +33,11 @@
 </div>
 <script>
     function filterPosts(criteria) {
-        // TODO: Implement filtering logic here
-        alert(criteria + '로 필터링');
+        const url = new URL(window.location.href);
+        url.searchParams.set('criteria', criteria);
+        window.location.href = url.toString();
     }
+
     document.addEventListener('DOMContentLoaded', () => {
         const contentElements = document.querySelectorAll('.post-content');
         const maxLength = 100; // 최대 글자 수 설정
@@ -45,6 +48,14 @@
             }
         });
     });
+
+    // 페이지 로드 시 메시지가 있으면 알림창을 표시
+    window.onload = function() {
+        const alertMessage = document.getElementById('alertMessage');
+        if (alertMessage && alertMessage.innerText.trim() !== "") {
+            alert(alertMessage.innerText);
+        }
+    };
 </script>
 </body>
 </html>
