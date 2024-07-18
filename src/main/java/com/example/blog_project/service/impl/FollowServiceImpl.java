@@ -15,17 +15,14 @@ public class FollowServiceImpl implements FollowService {
     private final FollowRepository followRepository;
     private final UserService userService;
 
-    @Transactional
     public long getFollowerCount(Long blogUserId) {
         return followRepository.countByBlogUserId(blogUserId);
     }
 
-    @Transactional
     public long getFollowingCount(Long userId) {
         return followRepository.countByCurrentUserId(userId);
     }
 
-    @Transactional
     public boolean isFollowing(Long blogUserId, Long userId) {
         return followRepository.existsByBlogUserIdAndCurrentUserId(blogUserId, userId);
     }
