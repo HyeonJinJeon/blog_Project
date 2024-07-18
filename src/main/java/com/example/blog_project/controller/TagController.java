@@ -2,6 +2,7 @@ package com.example.blog_project.controller;
 
 import com.example.blog_project.domain.Tag;
 import com.example.blog_project.domain.User;
+import com.example.blog_project.service.GetUserService;
 import com.example.blog_project.service.PostService;
 import com.example.blog_project.service.TagService;
 import com.example.blog_project.service.UserService;
@@ -18,13 +19,13 @@ public class TagController {
     private final TagService tagService;
     private final PostService postService;
     private final UserService userService;
+    private final GetUserService getUserService;
 
     @GetMapping("/posts/tag/{tagName}")
-    public String showPostByTag(@PathVariable String tagName, Model model, Authentication authentication){
+    public String showPostByTag(@PathVariable String tagName, Model model){
+        String username = getUserService.getUsername();
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String myUsername = userDetails.getUsername();
-        User user = userService.findUserByUsername(myUsername);
+        User user = userService.findUserByUsername(username);
 
         Tag tag = tagService.findByTagName(tagName);
         model.addAttribute("tag", tag);

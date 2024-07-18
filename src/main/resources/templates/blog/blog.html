@@ -23,9 +23,11 @@
             <span id="followerCount" th:text="${followerCount}">3</span> 팔로워
             <span th:text="${followingCount}">0</span> 팔로잉
             <span>&nbsp;</span>
-            <button th:if="${blogUser.username != user.username}" id="follow-btn" class="follow-button">
-                <span th:text="${isFollowing ? '팔로우 취소' : '팔로우'}">팔로우</span>
-            </button>
+            <div th:if="${user} != null">
+                <button th:if="${blogUser.username != user.username && user != null}" id="follow-btn" class="follow-button">
+                    <span th:text="${isFollowing ? '팔로우 취소' : '팔로우'}">팔로우</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -45,20 +47,18 @@
                 <a href="#">소개</a>
             </div>
             <div class="search-bar">
-                <input type="text" placeholder="검색어를 입력하세요">
-                <button>검색</button>
+                <input type="hidden" id="blogId" th:value="${blog.id}" />
+                <input type="text" id="searchInput" placeholder="검색어를 입력하세요">
+                <button id="searchBtn">검색</button>
             </div>
-            <!--            <h2>Posts</h2>-->
-            <div class="posts-grid">
+
+            <div class="posts-grid" id="postsGrid">
                 <div th:each="post : ${posts}" class="post-card">
                     <a th:href="@{'/post?blogId=' + ${blog.id} + '&postId=' + ${post.id}}" class="post-link">
                         <div class="post-content">
                             <h3 th:text="${post.title}">Post Title</h3>
-                            <div th:if="${postService.extractFirstImageUrl(post.content) != null}" class="image-container">
-                                <img th:src="${postService.extractFirstImageUrl(post.content)}" alt="Post Image" class="post-image">
-                            </div>
-                            <div th:unless="${postService.extractFirstImageUrl(post.content) != null}" class="image-container">
-                                <img th:src="@{/images/default-image.png}" alt="Default Image" class="post-image">
+                            <div class="image-container">
+                                <img th:src="${post.coverImage ?: '/images/default-image.png'}" alt="Post Image" class="post-image">
                             </div>
                             <p class="post-meta">Published on <span th:text="${post.createdAt}">Date</span></p>
                         </div>
@@ -70,38 +70,111 @@
 </div>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        console.log("버튼 클릭")
-        const followBtn = document.getElementById('follow-btn');
-        const followerCountElement = document.getElementById('followerCount');
-        let followerCount = parseInt(followerCountElement.textContent);
-        const blogUserId = [[${blogUser.id}]];
-        const userId = [[${user.id}]];
-        let isFollowing = [[${isFollowing}]];
+        console.log("DOM fully loaded and parsed");
 
-        async function toggleFollow() {
-            try {
-                if (isFollowing) {
-                    const response = await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'DELETE' });
-                    if (response.ok) {
-                        followBtn.textContent = '팔로우';
-                        isFollowing = false;
-                        followerCount--;
+        const followBtn = document.getElementById('follow-btn');
+        if (followBtn) {
+            const followerCountElement = document.getElementById('followerCount');
+            let followerCount = parseInt(followerCountElement.textContent);
+            const blogUserId = [[${blogUser.id}]];
+            const userId = [[${user != null ? user.id : -1}]];
+            let isFollowing = [[${isFollowing}]];
+
+            async function toggleFollow() {
+                try {
+                    if (isFollowing) {
+                        const response = await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'DELETE' });
+                        if (response.ok) {
+                            followBtn.textContent = '팔로우';
+                            isFollowing = false;
+                            followerCount--;
+                        }
+                    } else {
+                        const response = await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'POST' });
+                        if (response.ok) {
+                            followBtn.textContent = '팔로우 취소';
+                            isFollowing = true;
+                            followerCount++;
+                        }
                     }
-                } else {
-                    const response = await fetch(`/api/follow/${blogUserId}?userId=${userId}`, { method: 'POST' });
-                    if (response.ok) {
-                        followBtn.textContent = '팔로우 취소';
-                        isFollowing = true;
-                        followerCount++;
-                    }
+                    followerCountElement.textContent = followerCount;
+                } catch (error) {
+                    console.error('팔로우 상태를 변경하는 중 오류가 발생했습니다.', error);
                 }
-                followerCountElement.textContent = followerCount;
-            } catch (error) {
-                console.error('팔로우 상태를 변경하는 중 오류가 발생했습니다.', error);
             }
+
+            followBtn.addEventListener('click', toggleFollow);
         }
 
-        followBtn.addEventListener('click', toggleFollow);
+        // 검색 버튼 클릭 이벤트 처리
+        const searchBtn = document.getElementById('searchBtn');
+
+        searchBtn.addEventListener('click', async function () {
+            console.log("눌렀나1");
+            const searchInput = document.getElementById('searchInput').value.trim();
+            const blogId = document.getElementById('blogId').value;
+
+            if (searchInput !== '') {
+                try {
+                    console.log("눌렀나2");
+
+                    const response = await fetch(`/api/search?blogId=${blogId}&query=${searchInput}`);
+                    console.log(response);
+                    if (response.ok) {
+                        const searchData = await response.json();
+                        // 검색 결과를 처리하는 로직을 여기에 추가
+                        console.log('검색 결과:', searchData);
+                        renderSearchResults(searchData);
+                    } else {
+                        console.error('검색 요청에 실패했습니다.');
+                    }
+                } catch (error) {
+                    console.error('검색 요청 중 오류가 발생했습니다.', error);
+                }
+            } else {
+                console.warn('검색어를 입력하세요.');
+            }
+        });
+
+        function renderSearchResults(posts) {
+            const postsGrid = document.getElementById('postsGrid');
+            postsGrid.innerHTML = ''; // 기존 내용 초기화
+            if (posts.length === 0) {
+                postsGrid.innerHTML = '<p>검색 결과가 없습니다.</p>';
+            } else {
+                posts.forEach(post => {
+                    const postCard = document.createElement('div');
+                    postCard.className = 'post-card';
+                    const postLink = document.createElement('a');
+                    postLink.href = `/post?blogId=${post.blogId}&postId=${post.id}`;
+                    postLink.className = 'post-link';
+
+                    const postContent = document.createElement('div');
+                    postContent.className = 'post-content';
+
+                    const postTitle = document.createElement('h3');
+                    postTitle.textContent = post.title || 'Post Title';
+
+                    const postImage = document.createElement('img');
+                    postImage.src = post.coverImage || '/images/default-image.png';
+                    postImage.alt = 'Post Image';
+                    postImage.className = 'post-image';
+
+                    const postMeta = document.createElement('p');
+                    postMeta.className = 'post-meta';
+                    postMeta.innerHTML = `Published on <span>${post.createdAt}</span>`;
+
+                    postContent.appendChild(postTitle);
+                    postContent.appendChild(postImage);
+                    postContent.appendChild(postMeta);
+
+                    postLink.appendChild(postContent);
+                    postCard.appendChild(postLink);
+
+                    postsGrid.appendChild(postCard);
+                });
+            }
+        }
     });
 </script>
 </body>

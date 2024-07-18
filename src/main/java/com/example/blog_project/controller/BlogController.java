@@ -4,6 +4,7 @@ import com.example.blog_project.domain.Blog;
 import com.example.blog_project.domain.Series;
 import com.example.blog_project.domain.User;
 import com.example.blog_project.domain.Post;
+import com.example.blog_project.dto.PostDto;
 import com.example.blog_project.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -23,14 +24,19 @@ public class BlogController {
     private final UserService userService;
     private final FollowService followService;
     private final SeriesService seriesService;
+    private final GetUserService getUserService;
 
     //블로그 페이지 매핑
     @GetMapping("/blog")
-    public String my(@RequestParam(value = "username") String blogUsername, Model model, Authentication authentication) {
+    public String my(@RequestParam(value = "username") String blogUsername, Model model) {
         // 현재 로그인한 사용자 정보 가져오기
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String myUsername = userDetails.getUsername();
-        User user = userService.findUserByUsername(myUsername);
+        String username = getUserService.getUsername();
+        User user = userService.findUserByUsername(username);
+//        if (user == null) {
+//            User nullUser = new User();
+//            user = nullUser;
+//            user.setUsername("0");
+//        }
 
         User blogUser = userService.findUserByUsername(blogUsername);
         Long blogUserId = blogUser.getId();
@@ -44,38 +50,44 @@ public class BlogController {
         // 블로그 게시물 처리
         if (blog != null && blog.getPosts() != null) {
             List<Post> posts = blog.getPosts();
-            for (Post post : posts) {
-//                post.setContent(postService.sanitizePostContent(post.getContent())); // 내용의 태그 제거
-            }
-            model.addAttribute("posts", posts);
+            List<PostDto> removeTagPosts = postService.extractPlainTextFromPosts(posts);
+//            for (Post post : posts) {
+//                System.out.println(post.getContent());
+////                post.setContent(postService.sanitizePostContent(post.getContent())); // 내용의 태그 제거
+//            }
+            System.out.println(3333);
+            model.addAttribute("posts", removeTagPosts);
+            System.out.println(4444);
         }
 
         model.addAttribute("user", user);
         model.addAttribute("blogUser", blogUser);
         model.addAttribute("blog", blog);
         model.addAttribute("postService", postService);
-
+        System.out.println(5555);
         long followerCount = followService.getFollowerCount(blogUser.getId());
         long followingCount = followService.getFollowingCount(blogUser.getId());
-        boolean isFollowing = followService.isFollowing(blogUser.getId(), user.getId());
-        System.out.println("user: " + user.getId());
+        if(user!=null){
+            boolean isFollowing = followService.isFollowing(blogUser.getId(), user.getId());
+            System.out.println("isFollowing: " + isFollowing);
+            model.addAttribute("isFollowing", isFollowing);
+            System.out.println(6666);
+        }
+        System.out.println(7777);
         System.out.println("blogUser: " +  blogUser.getId());
-        System.out.println("isFollowing: " + isFollowing);
         model.addAttribute("followerCount", followerCount);
         model.addAttribute("followingCount", followingCount);
-        model.addAttribute("isFollowing", isFollowing);
-
+        System.out.println(8888);
         return "blog/blog";
     }
 
     @GetMapping("/blog/series")
-    public String getSeries(@RequestParam(value = "username") String blogUsername, Model model, Authentication authentication) {
+    public String getSeries(@RequestParam(value = "username") String blogUsername, Model model) {
         // 현재 로그인한 사용자 정보 가져오기
+        String username = getUserService.getUsername();
 
         System.out.println("시리즈 가져오나");
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String myUsername = userDetails.getUsername();
-        User user = userService.findUserByUsername(myUsername);
+        User user = userService.findUserByUsername(username);
 
         User blogUser = userService.findUserByUsername(blogUsername);
         Long blogUserId = blogUser.getId();
@@ -96,10 +108,14 @@ public class BlogController {
 
         long followerCount = followService.getFollowerCount(blogUser.getId());
         long followingCount = followService.getFollowingCount(blogUser.getId());
-        boolean isFollowing = followService.isFollowing(blogUser.getId(), user.getId());
+
+        if (user != null){
+            boolean isFollowing = followService.isFollowing(blogUser.getId(), user.getId());
+            model.addAttribute("isFollowing", isFollowing);
+        }
+
         model.addAttribute("followerCount", followerCount);
         model.addAttribute("followingCount", followingCount);
-        model.addAttribute("isFollowing", isFollowing);
 
         return "blog/series";
     }

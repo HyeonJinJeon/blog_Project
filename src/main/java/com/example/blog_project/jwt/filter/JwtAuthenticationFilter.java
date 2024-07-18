@@ -61,7 +61,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             handleMissingToken(request, response);
         } else {
             // Access Token이 있는 경우 처리
-            handleTokenValidation(request, response, token);
+            try {
+                // 토큰이 블랙리스트에 있는지 확인
+                if (jwtBlacklistService.isTokenBlacklisted(token)) {
+                    // 토큰이 블랙리스트에 있으면 인증 실패 처리
+                    handleException(request, response, JwtExceptionCode.BLACKLISTED_TOKEN, "Token is blacklisted: " + token);
+                } else {
+                    // 블랙리스트에 없으면 인증 정보 설정 시도
+                    getAuthentication(token);
+                    // 인증된 사용자의 정보를 헤더에 추가
+                    addUserInfoToHeader(response);
+                }
+            } catch (ExpiredJwtException e) {
+                // Access Token이 만료된 경우 Refresh Token 확인
+                handleExpiredAccessToken(request, response, token, e);
+            } catch (UnsupportedJwtException | MalformedJwtException | IllegalArgumentException e) {
+                // 지원하지 않는 형식의 토큰 또는 잘못된 토큰 인 경우 처리
+                handleException(request, response, JwtExceptionCode.INVALID_TOKEN, "Invalid token: " + token, e);
+            } catch (Exception e) {
+                // 그 외 다른 예외 발생 시
+                handleException(request, response, JwtExceptionCode.UNKNOWN_ERROR, "JWT filter internal error: " + token, e);
+            }
         }
 
         filterChain.doFilter(request, response);
@@ -73,70 +93,28 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // Access Token이 없는 경우 처리하는 메서드
-    private void handleMissingToken(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        // 쿠키에서 Refresh Token을 얻어옴
+    private void handleMissingToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // 쿠키에서 Refresh Token을 얻어냄
         String refreshToken = getRefreshToken(request);
-        if (StringUtils.hasText(refreshToken)) {
-            try {
-                // Refresh Token이 DB에 존재하는지 확인
-                if (refreshTokenService.isRefreshTokenValid(refreshToken)) {
-                    // Refresh Token이 유효한지 확인
-                    if (!jwtTokenizer.isRefreshTokenExpired(refreshToken)) {
-                        // Refresh Token이 유효한 경우 새로운 Access Token 발급
-                        String newAccessToken = jwtTokenizer.refreshAccessToken(refreshToken);
-                        // 새로운 Access Token을 쿠키에 설정
-                        setAccessTokenCookie(response, newAccessToken);
-                        // 새로운 Access Token으로 인증 정보 설정
-                        getAuthentication(newAccessToken);
-                    } else {
-                        // Refresh Token이 만료된 경우
-                        handleException(request, JwtExceptionCode.EXPIRED_TOKEN, "Refresh token expired");
-                    }
-                } else {
-                    // Refresh Token이 DB에 없는 경우
-                    handleException(request, JwtExceptionCode.NOT_FOUND_TOKEN, "Refresh token not found in database");
-                }
-            } catch (ExpiredJwtException e) {
-                // Refresh Token이 만료된 경우
-                handleException(request, JwtExceptionCode.EXPIRED_TOKEN, "Expired refresh token", e);
-            }
-        } else {
-            // Refresh Token도 없는 경우
-            handleException(request, JwtExceptionCode.NOT_FOUND_TOKEN, "Token not found in request");
-        }
-    }
 
-    // Access Token이 있는 경우 처리하는 메서드
-    private void handleTokenValidation(HttpServletRequest request, HttpServletResponse response, String token) throws ServletException, IOException {
-        try {
-            // 토큰이 블랙리스트에 있는지 확인
-            if (jwtBlacklistService.isTokenBlacklisted(token)) {
-                // 토큰이 블랙리스트에 있으면 인증 실패 처리
-                handleException(request, JwtExceptionCode.BLACKLISTED_TOKEN, "Token is blacklisted: " + token);
-            } else {
-                // 블랙리스트에 없으면 인증 정보 설정 시도
-                getAuthentication(token);
-            }
-        } catch (ExpiredJwtException e) {
-            // Access Token이 만료된 경우 Refresh Token 확인
-            handleExpiredAccessToken(request, response, token, e);
-        } catch (UnsupportedJwtException e) {
-            // 지원하지 않는 토큰인 경우
-            handleException(request, JwtExceptionCode.UNSUPPORTED_TOKEN, "Unsupported token: " + token, e);
-        } catch (MalformedJwtException e) {
-            // 잘못된 형식의 토큰인 경우
-            handleException(request, JwtExceptionCode.INVALID_TOKEN, "Invalid token: " + token, e);
-        } catch (IllegalArgumentException e) {
-            // 토큰이 없는 경우
-            handleException(request, JwtExceptionCode.NOT_FOUND_TOKEN, "Token not found: " + token, e);
-        } catch (Exception e) {
-            // 그 외 다른 예외 발생 시
-            handleException(request, JwtExceptionCode.UNKNOWN_ERROR, "JWT filter internal error: " + token, e);
+        if (StringUtils.hasText(refreshToken) && !jwtTokenizer.isRefreshTokenExpired(refreshToken)) {
+            // Refresh Token이 유효한 경우 새로운 Access Token 발급
+            String newAccessToken = jwtTokenizer.refreshAccessToken(refreshToken);
+            // 새로운 Access Token을 쿠키에 설정
+            setAccessTokenCookie(response, newAccessToken);
+            // 새로운 Access Token으로 인증 정보 설정
+            getAuthentication(newAccessToken);
+            // 새로 발급된 토큰 정보를 헤더에 추가
+            addUserInfoToHeader(response);
+        } else {
+            // Refresh Token이 없거나 만료된 경우 처리할 로직 추가
+            // 예를 들어, 로그인 페이지로 리다이렉트 또는 에러 처리 등
+            // 여기에서는 예외를 던지지 않고 그냥 넘어가도록 설정함
         }
     }
 
     // Access Token이 만료된 경우 처리하는 메서드
-    private void handleExpiredAccessToken(HttpServletRequest request, HttpServletResponse response, String token, ExpiredJwtException e) throws ServletException, IOException {
+    private void handleExpiredAccessToken(HttpServletRequest request, HttpServletResponse response, String token, ExpiredJwtException e) throws IOException {
         log.warn("Access token expired: {}", token);
         String refreshToken = getRefreshToken(request);
         if (StringUtils.hasText(refreshToken) && !jwtTokenizer.isRefreshTokenExpired(refreshToken)) {
@@ -146,9 +124,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             setAccessTokenCookie(response, newAccessToken);
             // 새로운 Access Token으로 인증 정보 설정
             getAuthentication(newAccessToken);
+            // 새로 발급된 토큰 정보를 헤더에 추가
+            addUserInfoToHeader(response);
         } else {
             // Refresh Token도 만료된 경우
-            handleException(request, JwtExceptionCode.EXPIRED_TOKEN, "Expired Token : " + token, e);
+            handleException(request, response, JwtExceptionCode.EXPIRED_TOKEN, "Expired Token : " + token, e);
         }
     }
 
@@ -213,13 +193,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     // 예외 처리 메서드
-    private void handleException(HttpServletRequest request, JwtExceptionCode exceptionCode, String logMessage) {
-        handleException(request, exceptionCode, logMessage, null);
+    private void handleException(HttpServletRequest request, HttpServletResponse response, JwtExceptionCode exceptionCode, String logMessage) throws IOException {
+        handleException(request, response, exceptionCode, logMessage, null);
     }
 
-    private void handleException(HttpServletRequest request, JwtExceptionCode exceptionCode, String logMessage, Exception e) {
+    private void handleException(HttpServletRequest request, HttpServletResponse response, JwtExceptionCode exceptionCode, String logMessage, Exception e) throws IOException {
         request.setAttribute("exception", exceptionCode.getCode());
         log.error(logMessage, e);
-        throw new BadCredentialsException(logMessage, e);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // 401 Unauthorized 설정
+        response.getWriter().write("Authentication failed: " + exceptionCode.getMessage()); // 에러 메시지 반환
+    }
+
+    // 인증된 사용자의 정보를 헤더에 추가하는 메서드
+    private void addUserInfoToHeader(HttpServletResponse response) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.isAuthenticated()) {
+            CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+            response.setHeader("X-Username", userDetails.getUsername());
+            response.setHeader("X-Roles", userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.joining(",")));
+        }
     }
 }

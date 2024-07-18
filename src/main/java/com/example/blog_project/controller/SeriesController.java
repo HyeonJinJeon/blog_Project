@@ -4,10 +4,7 @@ import com.example.blog_project.domain.Blog;
 import com.example.blog_project.domain.Post;
 import com.example.blog_project.domain.Series;
 import com.example.blog_project.domain.User;
-import com.example.blog_project.service.BlogService;
-import com.example.blog_project.service.PostService;
-import com.example.blog_project.service.SeriesService;
-import com.example.blog_project.service.UserService;
+import com.example.blog_project.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,15 +24,13 @@ public class SeriesController {
     private final BlogService blogService;
     private final PostService postService;
     private final UserService userService;
+    private final GetUserService getUserService;
 
     @GetMapping("blog/series/{title}")
-    public String getSeriesDetail(@PathVariable String title, Model model, @RequestParam(value = "username") String blogUsername, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String myUsername = userDetails.getUsername();
-        User user = userService.findUserByUsername(myUsername);
+    public String getSeriesDetail(@PathVariable String title, Model model, @RequestParam(value = "username") String blogUsername) {
 
-
-
+        String username = getUserService.getUsername();
+        User user = userService.findUserByUsername(username);
 
         User blogUser =  userService.findUserByUsername(blogUsername);
         Blog blog = blogService.getBlogByUserId(blogUser.getId());

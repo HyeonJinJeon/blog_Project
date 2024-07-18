@@ -1,12 +1,14 @@
 package com.example.blog_project.controller;
 
 import com.example.blog_project.domain.*;
+import com.example.blog_project.dto.PostDto;
 import com.example.blog_project.service.*;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -29,26 +31,49 @@ public class PostController {
     private final LikeService likeService;
     private final TagService tagService;
     private final DraftService draftService;
+    private final GetUserService getUserService;
 
     //메인 페이지
     @GetMapping("/main")
-    public String getAllPosts(Model model, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
+    public String getAllPosts(@RequestParam(required = false) String criteria, Model model) {
+        String username = getUserService.getUsername();
+        System.out.println("메인페이지" + username);
         User user = userService.findUserByUsername(username);
-        List<Post> posts = postService.findAll();
-        List<Post> removeTagPosts = postService.extractPlainTextFromPosts(posts);
+
+        List<Post> posts;
+        if ("popular".equals(criteria)) {
+            posts = postService.findAllByOrderByLikes();
+        } else {
+            posts = postService.findAllByOrderByCreatedAtDesc();
+        }
+
+        List<PostDto> removeTagPosts = postService.extractPlainTextFromPosts(posts);
+
         model.addAttribute("posts", removeTagPosts);
         model.addAttribute("user", user);
         model.addAttribute("postService", postService);
+
         return "main";
     }
+//    @GetMapping("/main")
+//    public String getAllPosts(Model model) {
+//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+//        String username = userDetails.getUsername();
+//        User user = userService.findUserByUsername(username);
+//        List<Post> posts = postService.findAll();
+//        List<Post> removeTagPosts = postService.extractPlainTextFromPosts(posts);
+//        model.addAttribute("posts", removeTagPosts);
+//        model.addAttribute("user", user);
+//        model.addAttribute("postService", postService);
+//        return "main";
+//    }
 
     //post 작성
     @GetMapping("/post/new")
-    public String showPostForm(Model model, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
+    public String showPostForm(Model model) {
+        String username = getUserService.getUsername();
+
         User user = userService.findUserByUsername(username);
         Blog blog = blogService.getBlogByUserId(user.getId());
         List<Series> seriesList = seriesService.getSeriesByBlogId(blog.getId());
@@ -58,11 +83,11 @@ public class PostController {
         return "blog/postForm";
     }
     @PostMapping("/posts")
-    public String createPost(@ModelAttribute Post post, @RequestParam("tags") String tags, @RequestParam("action") String action, HttpServletRequest request, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String myUsername = userDetails.getUsername();
+    public String createPost(@ModelAttribute Post post, @RequestParam("tags") String tags, @RequestParam("action") String action, HttpServletRequest request) {
+        String username = getUserService.getUsername();
 
-        User user = userService.findUserByUsername(myUsername);
+        System.out.println(1111);
+        User user = userService.findUserByUsername(username);
         Blog blog = blogService.getBlogByUserId(user.getId());
         post.setBlog(blog);
 
@@ -77,20 +102,19 @@ public class PostController {
             // 임시글 저장
             draftService.saveDraftByPost(post);
         }
-        return "redirect:/blog?username=" + myUsername;
+        return "redirect:/blog?username=" + username;
     }
     //post 수정
     @GetMapping("/post/modify")
     public String showModifyPostPage(@RequestParam("postId") Long postId,
-                                     Authentication authentication,
                                      Model model) {
+        String username = getUserService.getUsername();
+
         System.out.println("들어오나"+ postId);
         Post post = postService.getPostById(postId);
         List<Series> seriesList = seriesService.getSeriesByBlogId(post.getBlog().getId());
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String myUsername = userDetails.getUsername();
         String tagString = tagService.makeTagsString(post.getTagSet());
-        if (post != null && post.getBlog().getUser().getUsername().equals(myUsername)) {
+        if (post != null && post.getBlog().getUser().getUsername().equals(username)) {
             model.addAttribute("post", post);
             model.addAttribute("seriesList", seriesList);
             model.addAttribute("tags", tagString);
@@ -100,11 +124,11 @@ public class PostController {
         }
     }
     @PostMapping("/post/modify")
-    public String modifyPost(@ModelAttribute Post post, @RequestParam("tags") String tags, HttpServletRequest request, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String myUsername = userDetails.getUsername();
+    public String modifyPost(@ModelAttribute Post post, @RequestParam("tags") String tags, HttpServletRequest request) {
+        String username = getUserService.getUsername();
 
-        User user = userService.findUserByUsername(myUsername);
+
+        User user = userService.findUserByUsername(username);
         Blog blog = blogService.getBlogByUserId(user.getId());
         post.setBlog(blog);
 
@@ -116,25 +140,25 @@ public class PostController {
         // 포스트 저장
         postService.savePost(post);
 
-        return "redirect:/blog?username=" + myUsername;
+        return "redirect:/blog?username=" + username;
     }
     //게시글 삭제
     @DeleteMapping("/post/delete/{postId}")
     @ResponseBody
     public ResponseEntity<Map<String, String>> deletePost(@PathVariable Long postId, Authentication authentication) {
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String myUsername = userDetails.getUsername();
+        String username = getUserService.getUsername();
+
         Post post = postService.getPostById(postId);
         Map<String, String> response = new HashMap<>();
 
         if (post == null) {
-            response.put("redirectUrl", "/blog?username=" + myUsername);
+            response.put("redirectUrl", "/blog?username=" + username);
             return ResponseEntity.ok(response);
         }
 
         if (post.getBlog().getUser().getUsername().equals(authentication.getName())) {
             postService.deletePost(postId);
-            response.put("redirectUrl", "/blog?username=" + myUsername);
+            response.put("redirectUrl", "/blog?username=" + username);
             return ResponseEntity.ok(response);
         } else {
             response.put("redirectUrl", "/");
@@ -144,12 +168,12 @@ public class PostController {
 
     //게시글 상세보기를 위한 컨트롤러 작성
     @GetMapping("/post")
-    public String showPost(@RequestParam Long blogId, @RequestParam Long postId, Model model, Authentication authentication) {
+    public String showPost(@RequestParam Long blogId, @RequestParam Long postId, Model model) {
 
-        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-        String myUsername = userDetails.getUsername();
-        User user = userService.findUserByUsername(myUsername);
-        Blog blog = blogService.getBlogByUserId(user.getId());
+        String username = getUserService.getUsername();
+        System.out.println("게시글 상세보기" + username);
+        User user = userService.findUserByUsername(username);
+//        Blog blog = blogService.getBlogByUserId(user.getId());
 
         Post post = postService.getPostByBlogIdAndPostId(blogId, postId);
         List<Comment> commentList = commentService.findCommentsByPostId(postId);
@@ -168,7 +192,7 @@ public class PostController {
         model.addAttribute("createReply", createReply);
         model.addAttribute("likeCount", likeCount);
         model.addAttribute("isLiked", isLiked);
-        model.addAttribute("blog", blog);
+//        model.addAttribute("blog", blog);
 
         return "blog/post";
     }

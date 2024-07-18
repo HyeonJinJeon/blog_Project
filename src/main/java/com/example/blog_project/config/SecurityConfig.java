@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -41,7 +42,7 @@ public class SecurityConfig {
         http
                 // 인가 규칙을 설정합니다.
                 .authorizeRequests(authorize -> authorize
-                        .requestMatchers("/signUp", "/signIn", "/", "/css/**", "/js/**", "/images/**", "/api/login", "/api/**").permitAll()
+                        .requestMatchers("/signUp", "/signIn", "/", "/css/**", "/js/**", "/images/**", "/api/login", "/api/**", "/main", "/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // UsernamePasswordAuthenticationFilter 앞에 JWT 인증 필터를 추가합니다.
