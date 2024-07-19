@@ -77,16 +77,17 @@ public class PostController {
         User user = userService.findUserByUsername(username);
         Blog blog = blogService.getBlogByUserId(user.getId());
         List<Series> seriesList = seriesService.getSeriesByBlogId(blog.getId());
+
         model.addAttribute("post", new Post());
         model.addAttribute("seriesList", seriesList);
         model.addAttribute("tag", new Tag());
+        model.addAttribute("blog", blog);
         return "blog/postForm";
     }
     @PostMapping("/posts")
     public String createPost(@ModelAttribute Post post, @RequestParam("tags") String tags, @RequestParam("action") String action, HttpServletRequest request) {
         String username = getUserService.getUsername();
 
-        System.out.println(1111);
         User user = userService.findUserByUsername(username);
         Blog blog = blogService.getBlogByUserId(user.getId());
         post.setBlog(blog);
