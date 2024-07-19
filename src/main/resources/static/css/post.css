@@ -24,9 +24,46 @@ header p {
     font-size: 1.2em;
     color: #a5a5a5;
 }
+.bodyContent {
+    margin: 0 auto;
+    width: 1100px;
+}
 
-/* 수정 버튼 스타일 */
-.modify-button {
+/* 태그 섹션 스타일 */
+.tags-section {
+    margin-top: 20px;
+    text-align: center; /* 태그 섹션을 가운데 정렬 */
+}
+
+.tags-section h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.tags-list {
+    display: inline-flex; /* 요소들을 가로로 나란히 배치하고 가운데 정렬 */
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 0;
+    list-style: none;
+}
+
+.tag-button {
+    background-color: #444;
+    color: #eaeaea;
+    padding: 5px 10px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
+}
+
+.tag-button:hover {
+    background-color: #555;
+}
+
+/* 수정 및 삭제 버튼 스타일 */
+.modify-button, .delete-button {
     background-color: #444;
     color: #eaeaea;
     border: none;
@@ -35,10 +72,19 @@ header p {
     cursor: pointer;
     margin-top: 10px;
     font-size: 1em;
+    transition: background-color 0.3s;
 }
 
-.modify-button:hover {
+.modify-button:hover, .delete-button:hover {
     background-color: #555;
+}
+
+.delete-button {
+    background-color: #c82333;
+}
+
+.delete-button:hover {
+    background-color: #dc3545;
 }
 
 /* 컨텐츠 스타일 */
@@ -98,6 +144,9 @@ header p {
     padding: 5px 10px;
     border-radius: 5px;
     cursor: pointer;
+    margin-top: 10px;
+    font-size: 0.9em;
+    transition: background-color 0.3s;
 }
 
 .reply-button:hover {
@@ -134,6 +183,7 @@ header p {
     background-color: #444;
     color: #eaeaea;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .add-reply button:hover, .comments-section button:hover {

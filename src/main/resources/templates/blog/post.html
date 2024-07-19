@@ -11,12 +11,24 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.0/font/bootstrap-icons.css">
 </head>
 <body>
+<div class="bodyContent">
+
 <th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
 
 <header>
     <h1 th:text="${post.title}">Post Title</h1>
-    <p class="post-meta">Published on <span th:text="${post.createdAt}">Date</span> by <span th:text="${post.blog.user.username}">Author</span></p>
-
+    <p class="post-meta">
+        Published on <span th:text="${post.createdAt}">Date</span> by
+        <a th:href="@{'/blog?username='+ ${post.blog.user.username}}"
+           th:text="${post.blog.user.username}"
+           class="author-link">Author</a>
+    </p>    <div class="tags-section">
+        <ul class="tags-list">
+            <li th:each="tag : ${post.tagSet}">
+                <a class="tag-button" th:href="@{'/posts/tag/' + ${tag.name}}" th:text="'#' + ${tag.name}">Tag Name</a>
+            </li>
+        </ul>
+    </div>
     <!-- 수정 및 삭제 버튼 추가 -->
     <div th:if="${#authentication.name == post.blog.user.username}">
         <form th:action="@{/post/modify}" method="get" style="display: inline;">
@@ -27,14 +39,7 @@
     </div>
 </header>
 <div class="content">
-    <div class="tags-section">
-        <h2>Tags</h2>
-        <ul>
-            <li th:each="tag : ${post.tagSet}">
-                <a th:href="@{'/posts/tag/' + ${tag.name}}" th:text="${tag.name}">Tag Name</a>
-            </li>
-        </ul>
-    </div>
+
 
     <div class="post-content" th:utext="${post.content}">
         <!-- 포스트 내용이 여기에 표시됩니다. -->
@@ -82,7 +87,7 @@
 
     </div>
 </div>
-
+</div>
 <script>
     let isLiked = [[${isLiked}]];
     let likeCount = [[${likeCount}]];

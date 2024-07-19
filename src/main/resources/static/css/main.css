@@ -1,13 +1,188 @@
+/* 기본 스타일 */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1b1b1b;
+    color: #eaeaea;
+    margin: 0;
+    padding: 0;
+}
+
+/* 헤더 스타일 */
+header {
+    background-color: #282828;
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #444;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 2em;
+}
+
+header p {
+    margin: 10px 0 0;
+    font-size: 1.2em;
+    color: #a5a5a5;
+}
+
+.bodyContent {
+    margin: 0 auto;
+    width: 1100px;
+}
+
+/* 네비게이션 바 스타일 */
+.navbar {
+    background-color: #2a2a2a;
+    padding: 10px 20px;
+    border-bottom: 1px solid #444;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px; /* 네비게이션 바 너비 설정 */
+    margin: 0 auto; /* 가운데 정렬 */
+    width: 100%; /* 화면 크기에 맞게 유동적으로 조정 */
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.brand {
+    color: #eaeaea;
+    font-size: 1.5em;
+    text-decoration: none;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+
+.nav-link {
+    color: #eaeaea;
+    margin-left: 20px;
+    font-size: 1.1em;
+    text-decoration: none;
+}
+
+.nav-link:hover {
+    color: #ffffff;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+}
+
+.create-post {
+    margin-right: 20px;
+}
+
+.create-post a {
+    padding: 5px 10px;
+    background-color: #1b1b1b;
+    color: white;
+    border: 1px solid #eaeaea;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+}
+
+.create-post a:hover {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+.user-section {
+    position: relative;
+}
+
+.profile-link {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.profile-img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+}
+
+.header-dropdown {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 0;
+    background-color: #2a2a2a;
+    min-width: 160px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+}
+
+.header-dropdown.show {
+    display: block;
+}
+
+.header-dropdown a {
+    color: #eaeaea;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+}
+
+.header-dropdown a:hover {
+    background-color: #333;
+}
+
+.divider {
+    height: 1px;
+    background-color: #444;
+    margin: 8px 0;
+}
+
+.login-section {
+    margin-left: 20px;
+}
+
+.login-btn {
+    padding: 10px 20px;
+    background-color: #1b1b1b;
+    color: white;
+    border: 1px solid #eaeaea;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.login-btn:hover {
+    background-color: #333333;
+    color: #ffffff;
+}
+
 /* 전체 컨텐츠 래퍼 */
 .content-wrapper {
-    max-width: 1200px;
+    max-width: 1100px;
     margin: 0 auto;
+    width: 100%; /* 화면 크기에 맞게 유동적으로 조정 */
+    padding: 20px; /* 패딩 추가 */
 }
 
 /* 시리즈 그리드 스타일 */
 .series-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr); /* 한 줄에 다섯 개의 시리즈 카드 */
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 20px;
 }
 
@@ -17,7 +192,7 @@
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s ease;
-    height: 350px; /* 카드의 고정 높이 */
+    height: 350px;
 }
 
 .series-card:hover {
@@ -44,36 +219,30 @@
 
 .series-content .image-container {
     width: 100%;
-    height: 120px; /* 시리즈 이미지 높이 조정 */
-    overflow: hidden; /* 넘는 부분을 숨기기 */
+    height: 120px;
+    overflow: hidden;
     margin-bottom: 10px;
 }
 
 .series-content .series-image {
     width: 100%;
     height: 100%;
-    object-fit: cover; /* 이미지 비율을 유지하면서 넘는 부분을 잘라냄 */
+    object-fit: cover;
 }
 
 /* 게시글 내용 스타일 */
 .post-content {
     font-size: 0.9em;
     color: #d4d4d4;
-    height: 70px; /* 고정 높이 설정 */
-    overflow: hidden; /* 넘치는 텍스트 숨기기 */
+    height: 70px;
+    overflow: hidden;
 }
 
 /* 기본 이미지 스타일 */
 .series-card .series-image[alt="Default Image"] {
-    height: 120px; /* 기본 이미지 높이 조정 */
+    height: 120px;
     object-fit: contain;
     background-color: #1b1b1b;
-}
-
-/* 링크 클릭 시 스타일 변화를 없애는 추가 CSS */
-.series-card a, .series-card a:visited, .series-card a:hover, .series-card a:active {
-    color: inherit;
-    text-decoration: none;
 }
 
 /* 필터 섹션 스타일 */
@@ -96,4 +265,124 @@
 
 .filter-button:hover {
     background-color: #555;
+}
+
+/* 프로필 섹션 스타일 */
+.profile-section {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #444;
+    margin-bottom: 20px;
+}
+
+.profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.profile-info {
+    flex-grow: 1;
+}
+
+.profile-info h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.profile-info p {
+    margin: 5px 0 0;
+    font-size: 1.1em;
+    color: #a5a5a5;
+}
+
+.follow-info {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #a5a5a5;
+}
+
+.follow-button {
+    padding: 5px 10px;
+    background-color: #1b1b1b;
+    color: white;
+    border: 1px solid #eaeaea;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-left: auto;
+}
+
+.follow-button:hover {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+/* 커버 이미지 스타일 */
+.cover-image img {
+    width: 100%;
+    height: auto;
+}
+
+/* 섹션 스타일 */
+section {
+    max-width: 1100px;
+    margin: 20px auto;
+    padding: 0 20px;
+}
+
+/* 탭 메뉴 스타일 */
+.tab-menu {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.tab-menu a {
+    padding: 10px 20px;
+    color: #a5a5a5;
+    text-decoration: none;
+    font-size: 1.2em;
+}
+
+.tab-menu a.active {
+    color: #00c07f;
+    border-bottom: 2px solid #00c07f;
+}
+
+/* 검색 바 스타일 */
+.search-bar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #444;
+    border-radius: 20px 0 0 20px;
+    background-color: #2a2a2a;
+    color: #eaeaea;
+    width: 300px;
+}
+
+.search-bar button {
+    padding: 10px;
+    border: 1px solid #444;
+    border-radius: 0 20px 20px 0;
+    background-color: #00c07f;
+    color: #ffffff;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.search-bar button:hover {
+    background-color: #009e6f;
 }

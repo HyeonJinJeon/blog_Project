@@ -26,6 +26,62 @@ header p {
     color: #a5a5a5;
 }
 
+/* 프로필 섹션 스타일 */
+.profile-section {
+    display: flex;
+    align-items: center;
+    padding: 20px;
+    background-color: #2a2a2a;
+    border-bottom: 1px solid #444;
+    margin-bottom: 20px;
+}
+
+.profile-image img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+.profile-info {
+    flex-grow: 1; /* 남은 공간을 차지하도록 설정 */
+}
+
+.profile-info h2 {
+    margin: 0;
+    font-size: 1.5em;
+}
+
+.profile-info p {
+    margin: 5px 0 0;
+    font-size: 1.1em;
+    color: #a5a5a5;
+}
+
+.follow-info {
+    margin-top: 10px;
+    font-size: 1em;
+    color: #a5a5a5;
+}
+
+.follow-button {
+    padding: 5px 10px; /* 크기 줄이기 */
+    background-color: #1b1b1b;
+    color: white;
+    border: 1px solid #eaeaea;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.8em;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    margin-left: auto; /* 오른쪽 끝으로 이동 */
+}
+
+.follow-button:hover {
+    background-color: #333333;
+    color: #ffffff;
+}
+
 .bodyContent {
     margin: 0 auto;
     width: 1100px;

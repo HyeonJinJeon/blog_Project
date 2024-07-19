@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="/css/blog.css">
 </head>
 <body>
+<div class="bodyContent">
 <th:block th:replace="~{fragments/header :: headerFragment}"></th:block>
 <div id="alertMessage" th:if="${message}" th:text="${message}"></div>
 <div class="content-wrapper">
@@ -30,6 +31,7 @@
             </a>
         </div>
     </div>
+</div>
 </div>
 <script>
     function filterPosts(criteria) {

@@ -155,6 +155,9 @@
                     const postTitle = document.createElement('h3');
                     postTitle.textContent = post.title || 'Post Title';
 
+                    const imageContainer = document.createElement('div');
+                    imageContainer.className = 'image-container';
+
                     const postImage = document.createElement('img');
                     postImage.src = post.coverImage || '/images/default-image.png';
                     postImage.alt = 'Post Image';
@@ -165,8 +168,10 @@
                     postMeta.innerHTML = `Published on <span>${post.createdAt}</span>`;
 
                     postContent.appendChild(postTitle);
-                    postContent.appendChild(postImage);
                     postContent.appendChild(postMeta);
+                    postContent.appendChild(imageContainer);
+
+                    imageContainer.appendChild(postImage);
 
                     postLink.appendChild(postContent);
                     postCard.appendChild(postLink);
