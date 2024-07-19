@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>새 글 작성</title>
@@ -34,7 +35,15 @@
                 </th:block>
             </select>
             <input type="hidden" id="series" name="seriesId" th:field="*{post.series}">
+            <button type="button" id="addSeriesBtn">새 시리즈 추가</button>
         </div>
+        <div class="form-group" id="newSeriesGroup" style="display: none;">
+            <label for="newSeriesTitle">새 시리즈 제목:</label>
+            <input type="text" id="newSeriesTitle">
+            <button type="button" id="saveSeriesBtn">저장</button>
+        </div>
+        <!-- blogId를 숨겨진 필드로 추가 -->
+        <input type="hidden" id="blogId" name="blogId" th:value="${blog.id}">
         <button type="submit" name="action" value="publish">글 작성</button>
         <button type="submit" name="action" value="saveDraft">임시글 작성</button>
     </form>
@@ -68,6 +77,51 @@
     // seriesId 선택 시 숨겨진 input에 값 설정
     document.querySelector('#seriesId').addEventListener('change', (event) => {
         document.querySelector('#series').value = event.target.value;
+    });
+
+    // 새 시리즈 추가 버튼 클릭 시 입력 필드 보이기
+    document.querySelector('#addSeriesBtn').addEventListener('click', () => {
+        document.querySelector('#newSeriesGroup').style.display = 'block';
+    });
+
+    // 새 시리즈 저장 버튼 클릭 시
+    document.querySelector('#saveSeriesBtn').addEventListener('click', async () => {
+        const newSeriesTitle = document.querySelector('#newSeriesTitle').value.trim();
+        const blogId = document.querySelector('#blogId').value;
+        if (newSeriesTitle) {
+            try {
+                const response = await fetch(`/api/series?blogId=${blogId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ title: newSeriesTitle })  // blogId 쿼리 파라미터로 전달
+                });
+
+                if (response.ok) {
+                    const newSeries = await response.json();
+                    const seriesSelect = document.querySelector('#seriesId');
+                    const newOption = document.createElement('option');
+                    newOption.value = newSeries.id;
+                    newOption.textContent = newSeries.title;
+                    newOption.selected = true;
+                    seriesSelect.appendChild(newOption);
+
+                    // 새 시리즈 선택
+                    document.querySelector('#series').value = newSeries.id;
+
+                    // 입력 필드 숨기기
+                    document.querySelector('#newSeriesGroup').style.display = 'none';
+                    document.querySelector('#newSeriesTitle').value = '';
+                } else {
+                    alert('새 시리즈를 추가하는데 실패했습니다.');
+                }
+            } catch (error) {
+                console.error('새 시리즈를 추가하는 중 오류가 발생했습니다.', error);
+            }
+        } else {
+            alert('시리즈 제목을 입력하세요.');
+        }
     });
 </script>
 </body>
