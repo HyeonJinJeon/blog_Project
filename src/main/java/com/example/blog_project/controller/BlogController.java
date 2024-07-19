@@ -12,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
@@ -55,29 +56,23 @@ public class BlogController {
 //                System.out.println(post.getContent());
 ////                post.setContent(postService.sanitizePostContent(post.getContent())); // 내용의 태그 제거
 //            }
-            System.out.println(3333);
             model.addAttribute("posts", removeTagPosts);
-            System.out.println(4444);
         }
 
         model.addAttribute("user", user);
         model.addAttribute("blogUser", blogUser);
         model.addAttribute("blog", blog);
         model.addAttribute("postService", postService);
-        System.out.println(5555);
         long followerCount = followService.getFollowerCount(blogUser.getId());
         long followingCount = followService.getFollowingCount(blogUser.getId());
         if(user!=null){
             boolean isFollowing = followService.isFollowing(blogUser.getId(), user.getId());
             System.out.println("isFollowing: " + isFollowing);
             model.addAttribute("isFollowing", isFollowing);
-            System.out.println(6666);
         }
-        System.out.println(7777);
         System.out.println("blogUser: " +  blogUser.getId());
         model.addAttribute("followerCount", followerCount);
         model.addAttribute("followingCount", followingCount);
-        System.out.println(8888);
         return "blog/blog";
     }
 
@@ -118,6 +113,46 @@ public class BlogController {
         model.addAttribute("followingCount", followingCount);
 
         return "blog/series";
+    }
+
+    @GetMapping("blog/series/{title}")
+    public String getSeriesDetail(@PathVariable String title, Model model, @RequestParam(value = "username") String blogUsername) {
+
+        String username = getUserService.getUsername();
+        User user = userService.findUserByUsername(username);
+
+        User blogUser =  userService.findUserByUsername(blogUsername);
+        Blog blog = blogService.getBlogByUserId(blogUser.getId());
+        Long blogId = blog.getId();
+        Series series = seriesService.getSeriesByTitleAndBlogId(title, blogId);
+
+        // 블로그 게시물 처리
+        if (blog != null && blog.getPosts() != null) {
+            List<Post> posts = postService.getPostBySeriesId(series.getId());
+            for (Post post : posts) {
+//                post.setContent(postService.sanitizePostContent(post.getContent())); // 내용의 태그 제거
+            }
+            model.addAttribute("posts", posts);
+        }
+
+        model.addAttribute("series", series);
+//        model.addAttribute("postList", postService.getPostBySeriesId(series.getId()));
+        model.addAttribute("postService", postService);
+        model.addAttribute("blog", blog);
+        model.addAttribute("user", user);
+        model.addAttribute("blogUser", blogUser);
+
+        long followerCount = followService.getFollowerCount(blogUser.getId());
+        long followingCount = followService.getFollowingCount(blogUser.getId());
+        if(user!=null){
+            boolean isFollowing = followService.isFollowing(blogUser.getId(), user.getId());
+            System.out.println("isFollowing: " + isFollowing);
+            model.addAttribute("isFollowing", isFollowing);
+        }
+        System.out.println("blogUser: " +  blogUser.getId());
+        model.addAttribute("followerCount", followerCount);
+        model.addAttribute("followingCount", followingCount);
+        return "blog/series-detail";
     }
 
     //헤더 파일 매핑
