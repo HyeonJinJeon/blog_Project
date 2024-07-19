@@ -11,4 +11,6 @@ public interface BlogService {
 
     //블로그 불러오는 로직
     Blog getBlogByUserId(Long userId);
+
+    Blog getBlogById(Long blogId);
 }

@@ -10,7 +10,7 @@
 <div th:fragment="headerFragment">
     <nav class="navbar">
         <div class="container">
-            <a class="brand" href="/" th:text="${blog != null} ? ${blog.title} : 'My Blog'">My Blog</a>
+            <a class="brand" th:href="@{'/blog?username=' + ${user.username}}" th:text="${blog != null} ? ${blog.title} : 'My Blog'">My Blog</a>
             <ul class="nav-links">
                 <li><a class="nav-link" href="/search"><i class="bi bi-search"></i></a></li>
                 <li><a class="nav-link" href="/notifications"><i class="bi bi-bell"></i></a></li>
@@ -24,6 +24,7 @@
                         <img th:src="${user.profileImageUrl}" alt="Profile Image" class="profile-img" id="profileImage" onclick="toggleDropdown()">
                     </a>
                     <div class="header-dropdown" id="dropdownMenu">
+                        <a th:href="@{/main}">메인페이지</a>
                         <a th:href="@{'/blog?username=' + ${user.username}}">내 블로그</a>
                         <a th:href="@{'/blog/draft?username=' + ${user.username}}">임시 글</a>
                         <a th:href="@{/detail}">회원 정보</a>
