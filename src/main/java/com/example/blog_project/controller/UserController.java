@@ -130,6 +130,7 @@ public class UserController {
         String username = userDetails.getUsername();
         User currentUser = userService.findUserByUsername(username);
         user.setId(currentUser.getId());
+        user.setUsername(username);
 
         System.out.println("회원정보 수정 들어오나");
         System.out.println(user.getId());
