@@ -58,4 +58,9 @@ public class UserServiceImpl implements UserService {
     public Optional<User> getUser(Long id){
         return userRepository.findById(id);
     }
+
+    @Override
+    public boolean isUsernameDuplicate(String username) {
+        return userRepository.existsByUsername(username);
+    }
 }

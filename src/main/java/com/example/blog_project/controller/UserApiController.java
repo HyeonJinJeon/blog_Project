@@ -214,4 +214,10 @@ public class UserApiController {
             e.printStackTrace();
         }
     }
+
+    @GetMapping("/checkUsername")
+    public ResponseEntity<Boolean> checkUsername(@RequestParam String username) {
+        boolean isDuplicate = userService.isUsernameDuplicate(username);
+        return ResponseEntity.ok(isDuplicate);
+    }
 }

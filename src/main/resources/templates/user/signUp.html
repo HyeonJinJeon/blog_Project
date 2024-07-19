@@ -4,14 +4,17 @@
     <meta charset="UTF-8">
     <title>회원가입</title>
     <link rel="stylesheet" href="/css/signUp.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
 <div class="signup-container">
     <h2>회원가입</h2>
     <form action="/signUp" method="post" enctype="multipart/form-data" th:object="${user}">
         <div class="input-group">
-            <label for="username">닉네임:</label>
+            <label for="username">닉네임(ID):</label>
             <input type="text" id="username" name="username" th:field="*{username}" required>
+            <button type="button" id="checkUsernameBtn">중복체크</button>
+            <span id="usernameCheckResult"></span>
         </div>
         <div class="input-group">
             <label for="name">이름:</label>
@@ -29,8 +32,39 @@
             <label for="profileImage">프로필 이미지:</label>
             <input type="file" id="profileImage" name="profileImage">
         </div>
-        <button type="submit">가입하기</button>
+        <button type="submit" id="submitBtn" disabled>가입하기</button>
     </form>
 </div>
+
+<script>
+    $(document).ready(function() {
+        $('#checkUsernameBtn').on('click', function() {
+            let username = $('#username').val();
+            if (username) {
+                $.ajax({
+                    url: '/api/checkUsername',
+                    type: 'GET',
+                    data: { username: username },
+                    success: function(isDuplicate) {
+                        if (isDuplicate) {
+                            $('#usernameCheckResult').text('이미 사용 중인 닉네임입니다.').css('color', 'red');
+                            $('#submitBtn').prop('disabled', true);
+                        } else {
+                            $('#usernameCheckResult').text('사용 가능한 닉네임입니다.').css('color', 'green');
+                            $('#submitBtn').prop('disabled', false);
+                        }
+                    },
+                    error: function() {
+                        $('#usernameCheckResult').text('중복 체크 중 오류가 발생했습니다.').css('color', 'red');
+                        $('#submitBtn').prop('disabled', true);
+                    }
+                });
+            } else {
+                $('#usernameCheckResult').text('닉네임을 입력해주세요.').css('color', 'red');
+                $('#submitBtn').prop('disabled', true);
+            }
+        });
+    });
+</script>
 </body>
 </html>

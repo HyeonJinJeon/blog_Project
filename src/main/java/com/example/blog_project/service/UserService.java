@@ -15,4 +15,6 @@ public interface UserService {
     User updateUser(User user);
 
     Optional<User> getUser(Long id);
+
+    boolean isUsernameDuplicate(String username);
 }
