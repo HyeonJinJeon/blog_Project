@@ -10,7 +10,11 @@
 <div th:fragment="headerFragment">
     <nav class="navbar">
         <div class="container">
-            <a class="brand" th:href="@{'/blog?username=' + ${user.username}}" th:text="${blog != null} ? ${blog.title} : 'My Blog'">My Blog</a>
+            <a class="brand"
+               th:href="${user != null ? '/blog?username=' + user.username : '/main'}"
+               th:text="${user != null ? (blog != null ? blog.title : 'My Blog') : 'velog'}">
+                My Blog
+            </a>
             <ul class="nav-links">
                 <li><a class="nav-link" href="/search"><i class="bi bi-search"></i></a></li>
                 <li><a class="nav-link" href="/notifications"><i class="bi bi-bell"></i></a></li>
