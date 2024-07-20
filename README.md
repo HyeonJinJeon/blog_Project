@@ -16,7 +16,7 @@
     - [x] 로그인 실패 후 다시 로그인 폼으로 이동 (오류 메시지 출력)  
       - 실패 시 다시 로그인 폼으로 이동하지만 오류 메시지를 출력하지는 않음
 - [x] Spring Security 를 이용한 로그인 구현
-    - [ ] Form Login
+    - [x] Form Login
     - [x] JWT Login
     - [ ] OAuth2 로그인
 
