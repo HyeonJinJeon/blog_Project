@@ -22,7 +22,8 @@
         <a th:href="@{'/blog?username='+ ${post.blog.user.username}}"
            th:text="${post.blog.user.username}"
            class="author-link">Author</a>
-    </p>    <div class="tags-section">
+    </p>
+    <div class="tags-section">
         <ul class="tags-list">
             <li th:each="tag : ${post.tagSet}">
                 <a class="tag-button" th:href="@{'/posts/tag/' + ${tag.name}}" th:text="'#' + ${tag.name}">Tag Name</a>
