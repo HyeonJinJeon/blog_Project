@@ -43,6 +43,35 @@ body {
     color: #eaeaea;
 }
 
+.input-group .input-with-button input {
+    width: calc(100% - 90px); /* Adjusting the width to accommodate the button */
+    display: inline-block;
+}
+
+.input-with-button {
+    display: flex;
+    align-items: center;
+}
+
+.input-with-button input {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.input-with-button button {
+    width: 100px;
+    height: 30px;
+    border: none;
+    background-color: #3bde6e;
+    color: #1b1b1b;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.input-with-button button:hover {
+    background-color: #32c65a;
+}
+
 button[type="submit"] {
     width: 100%;
     padding: 10px;

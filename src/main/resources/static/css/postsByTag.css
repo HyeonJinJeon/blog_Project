@@ -20,6 +20,11 @@ header h1 {
     font-size: 2em;
 }
 
+.bodyContent {
+    margin: 0 auto;
+    width: 1100px;
+}
+
 /* 본문 내용 스타일 */
 .content {
     margin: 0 auto;
@@ -37,12 +42,14 @@ header h1 {
 /* 포스트 카드 스타일 */
 .post-card {
     display: flex;
+    width: 1050px;
     align-items: center;
     background-color: #2e2e2e;
     border: 1px solid #444;
     border-radius: 8px;
     padding: 10px;
     transition: transform 0.2s;
+
 }
 
 .post-card:hover {

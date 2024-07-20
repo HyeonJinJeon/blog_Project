@@ -12,8 +12,10 @@
     <form action="/signUp" method="post" enctype="multipart/form-data" th:object="${user}">
         <div class="input-group">
             <label for="username">닉네임(ID):</label>
-            <input type="text" id="username" name="username" th:field="*{username}" required>
-            <button type="button" id="checkUsernameBtn">중복체크</button>
+            <div class="input-with-button">
+                <input type="text" id="username" name="username" th:field="*{username}" required>
+                <button type="button" id="checkUsernameBtn">중복체크</button>
+            </div>
             <span id="usernameCheckResult"></span>
         </div>
         <div class="input-group">
